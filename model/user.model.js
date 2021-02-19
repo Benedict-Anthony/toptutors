@@ -13,8 +13,18 @@ var studentSchema = new Schema({
 })
 
 var userSchema = new Schema({
-    name:String,
-    username:{
+    first_name:{
+        type:String,
+        required:true,
+    },
+    last_name:{
+        type:String,
+        required:true,
+    },
+    phone_number:{
+        type:String,
+    },
+    email:{
         type:String,
         unique:true,
         lowercase:true
@@ -33,7 +43,11 @@ var userSchema = new Schema({
         type:String,
     },
     category:[studentSchema],
-    token:String
+    role:{
+        type:String,
+        enum:["user"]
+    },
+    token:String,
 })
 
     userSchema.pre('save',function(next,doc){

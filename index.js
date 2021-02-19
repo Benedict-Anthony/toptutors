@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 var adminRoutes = require('./Route/admin.route');
 var companyRoutes = require('./Route/company.route');
 var parentRoute = require('./Route/parents.route');
+var cors = require('cors')
 
 //app middleware sec
 app.use(bodyParser.json());
@@ -34,6 +35,7 @@ catch(error){
 }
 
 const port = process.env.PORT || 8080
+app.use(cors())
 app.listen(port,()=>{
     console.log('server is running on port' + port)
 })
