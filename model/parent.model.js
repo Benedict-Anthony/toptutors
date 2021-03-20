@@ -16,13 +16,18 @@ const parentSchema = new Schema({
         required:true,
         max:100
     },
+    address:{
+        type:String,
+        required:false,
+        max:300 
+    },
     email:{
         type:String,
         required:true,
         unique:true,
         max:100
     },
-    phone_numeber:{
+    phone_number:{
         type:String,
         required:false,
         max:100
