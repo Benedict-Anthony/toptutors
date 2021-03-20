@@ -38,4 +38,36 @@ router.post("/signup", (req, res) => {
     });
 });
 
+router.post("/login", (req, res) => {
+    var { email, password } = req.body;
+    dbParents
+      .findOne({ email })
+      .then((doc) => {
+        doc.comparePassword(password, function (err, isMatch) {
+          if (err) throw err;
+          if (isMatch) {
+            doc.generateToken((error, user) => {
+              console.log(error);
+              if (error) return res.send(400, error);
+              res.set("token", user.token);
+              res.send(200, {
+                message: "User loggedIn",
+                id: user.id,
+              });
+            });
+          } else {
+            res.send(400, {
+              message: "Auth failed password incorrect",
+            });
+          }
+        });
+      })
+      .catch((error) => {
+        res.json({
+          message: "logged in failed user not found",
+          error,
+        });
+      });
+  });
+
 module.exports = router;
