@@ -19,12 +19,12 @@ app.use('/parent',parentRoute);
 //connect to mongodb
 mongoose.Promise = global.Promise
 try {
-const uri = "mongodb+srv://Honorableisrael:01uNyPvNjb0nSoWO@clusterhilary-vscri.mongodb.net/test?retryWrites=true&w=majority";
+const uri = "mongodb+srv://Honorableisrael:01uNyPvNjb0nSoWO@clusterhilary-vscri.mongodb.net/Toptutors?retryWrites=true&w=majority";
 mongoose.connect(uri,{
     useUnifiedTopology:true,
     useNewUrlParser:true,
     useCreateIndex: true,
-})
+})-
 mongoose.set('useFindAndModify', false);
 let db = mongoose.connection;
 db.once('open',()=>console.log('db is initailized'))

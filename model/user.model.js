@@ -36,7 +36,7 @@ var userSchema = new Schema({
     gender:{
         type:String,
         capitalize:true,
-        enum:["Fale","Female"],
+        enum:["Male","Female"],
     },
     company:[{ref:'company',type:Schema.Types.ObjectId}],
     ocupation:{

@@ -37,7 +37,7 @@ router.post("/user", (req, res) => {
   console.log(req.body);
   dbUsers.findOne({ email: req.body.email }, (err) => {
     if (err) {
-      const users = new dbUsers({ ...req.body, ...req.body.category });
+      const users = new dbUsers({ ...req.body });
       users
         .save()
         .then((response) => {
