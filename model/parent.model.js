@@ -57,8 +57,14 @@ const parentSchema = new Schema({
         type:String,
         required:true,
         max:100
+    },
+    token:{
+        type:String,
+        required:false,
+        max:100
     }
 })
+
 parentSchema.pre('save',function(next,doc){
     var user = this;
     console.log(user.isNew)
@@ -79,6 +85,7 @@ parentSchema.pre('save',function(next,doc){
         next()
     }
 })
+
 parentSchema.methods.comparePassword = function(candidatePassword,cb){
     bcrypt.compare(candidatePassword.toString(),this.password,function(error,ismatch){
         if(error) throw error

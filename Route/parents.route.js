@@ -38,6 +38,27 @@ router.post("/signup", (req, res) => {
     });
 });
 
+router.get("/:token", (req, res) => {
+  console.log(req.params.token)
+  dbParents
+    .findOne({ token: req.params.token })
+    .then((user) => {
+        console.log(user)
+        res.send(200, {
+          message: "Successfully retrieved user information",
+          id: user.id,
+          user:user,
+        });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(400).json({
+        message: "This token does not exist",
+        error,
+      });
+    });
+});
+
 router.post("/login", (req, res) => {
     var { email, password } = req.body;
     dbParents
@@ -53,6 +74,7 @@ router.post("/login", (req, res) => {
               res.send(200, {
                 message: "User loggedIn",
                 id: user.id,
+                token:user.token,
               });
             });
           } else {
