@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 var adminRoutes = require('./Route/admin.route');
 var companyRoutes = require('./Route/company.route');
 var parentRoute = require('./Route/parents.route');
+var tutorRoute = require('./Route/tutors.route');
 var cors = require('cors')
 
 //app middleware sec
@@ -14,6 +15,7 @@ app.use('/users',userRoutes);
 app.use('/admins',adminRoutes);
 app.use('/company',companyRoutes);
 app.use('/parent',parentRoute);
+app.use('/tutors',tutorRoute);
 
 
 //connect to mongodb
