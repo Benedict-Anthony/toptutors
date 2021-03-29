@@ -29,16 +29,54 @@ var userSchema = new Schema({
         unique:true,
         lowercase:true
     },
+    photo:{
+        type:String,
+    },
+    marital_status:{
+        type:String,
+        capitalize:true,
+        enum:["Single","Married","Other"],
+    },
     password:{
         type:String,
         required:true 
     },
-    gender:{
+    sex:{
         type:String,
         capitalize:true,
         enum:["Male","Female"],
     },
-    company:[{ref:'company',type:Schema.Types.ObjectId}],
+    country:{
+        type:String,
+        required:false,
+        max:200
+    },
+    state_of_residence:{
+        type:String,
+        required:false,
+        max:100
+    },
+    city:{
+        type:String,
+        required:false,
+        max:100  
+    },
+    start_date:{
+        type:Date,
+        required:false,
+        max:100
+    },
+    relationship:{
+        type:String,
+        required:false,
+        max:100,
+    },
+    nationality: {
+        type:String,
+        required:false,
+        max:150,
+    },
+    tutor:[{ref:'parent',type:Schema.Types.ObjectId}],
     ocupation:{
         type:String,
     },

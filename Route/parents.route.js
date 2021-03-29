@@ -1,6 +1,8 @@
 const express = require("express");
+const checkAuth = require("../middleware/check-auth")
 const router = express.Router();
 var dbParents = require("../model/parent.model");
+
 
 router.get("/", (req, res) => {
   res.send({

@@ -32,15 +32,20 @@ const parentSchema = new Schema({
         required:false,
         max:100
     },
+    country:{
+        type:String,
+        required:false,
+        max:200
+    },
     state_of_residence:{
         type:String,
         required:false,
         max:100
     },
-    location:{
+    city:{
         type:String,
         required:false,
-        max:100
+        max:100  
     },
     start_date:{
         type:Date,
@@ -51,12 +56,22 @@ const parentSchema = new Schema({
         type:String,
         required:false,
         max:100,
-        enum:["learner","student"]
+    },
+    sex:{
+        type:String,
+        required:false,
+        max:100,
+        enum:["Female","Male"]
+    },
+    nationality: {
+        type:String,
+        required:false,
+        max:150,
     },
     password:{
         type:String,
         required:true,
-        max:100
+        max:300
     },
     token:{
         type:String,

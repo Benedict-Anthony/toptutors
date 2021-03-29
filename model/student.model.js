@@ -35,11 +35,6 @@ var teacherSchema = new Schema({
         required:false,
         max:100
     },
-    location:{
-        type:String,
-        required:false,
-        max:100
-    },
     start_date:{
         type:Date,
         required:false,
