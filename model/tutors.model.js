@@ -126,7 +126,7 @@ tutorsSchema.methods.comparePassword = function(candidatePassword,cb){
 tutorsSchema.methods.generateToken = function(cb){
     var user = this;
     var secretkey = process.env.auth_secretkey;
-    const generatedToken = jwt.sign({id:user._id,email:user.email},secretkey);
+    const generatedToken = jwt.sign({id:user._id,email:user.email,type:"tutor"},secretkey);
     user.token = generatedToken;
     user.save((err,userWithUpdatedToken)=>{
         if (err) return cb(err,null);
