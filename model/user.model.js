@@ -118,7 +118,7 @@ var userSchema = new Schema({
     userSchema.methods.generateToken = function(cb){
         var user = this;
         var secretkey = 'specailsecretword';
-        const generatedToken = jwt.sign(user._id.toString(16),secretkey);
+        const generatedToken = jwt.sign({id:user._id,email:user.email},secretkey);
         user.token = generatedToken;
         user.save((err,userWithUpdatedToken)=>{
             if (err) return cb(err,null);

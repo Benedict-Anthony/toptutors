@@ -2,12 +2,22 @@ const jsonwebtoken = require("jsonwebtoken")
 module.exports = (req,res,next)=>{
     try{
         const token = req.headers.authorization
-        console.log(token)
-        const decodedToken = jsonwebtoken.verify(token,"specailsecretword")
+        const Token = token.split(' ')[1] //Separate bearer from the token
+        const decodedToken = jsonwebtoken.verify(Token,process.env.auth_secretkey)
+        if(decodedToken.type=="parent"){
+          return  next()            
+        }
+        if(decodedToken.type!=="parent"){
+            res.status(400).json({
+                message:"Invalid token, current user must be signed in as a parent to see fetch this information"
+            })            
+        }
+        // next()
     }
     catch(error){
-        res.send(401,{
-            message:"Invalid token"
+        res.status(401).json({
+            message:"Invalid token",
+            error
         })
     }
 }

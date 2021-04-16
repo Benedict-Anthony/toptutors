@@ -7,8 +7,12 @@ var adminRoutes = require('./Route/admin.route');
 var companyRoutes = require('./Route/company.route');
 var parentRoute = require('./Route/parents.route');
 var tutorRoute = require('./Route/tutors.route');
+var config = require("./config")
 var cors = require('cors')
+var dotenv = require('dotenv');
 
+
+dotenv.config();
 //app middleware sec
 app.use(bodyParser.json());
 app.use('/users',userRoutes);

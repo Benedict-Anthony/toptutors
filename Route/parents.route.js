@@ -12,7 +12,7 @@ router.get("/", (req, res) => {
 });
 
 
-router.get("/tutors", (req, res) => {
+router.get("/tutors",checkAuth, (req, res) => {
   dbTutors
   .find()
   .then((doc)=>{
