@@ -2,12 +2,31 @@ const express = require("express");
 const checkAuth = require("../middleware/check-auth")
 const router = express.Router();
 var dbParents = require("../model/parent.model");
+var dbTutors = require("../model/tutors.model");
 
 
 router.get("/", (req, res) => {
   res.send({
     message: "message sending",
   });
+});
+
+
+router.get("/tutors", (req, res) => {
+  dbTutors
+  .find()
+  .then((doc)=>{
+    res.status(200).json({
+      message: "Successful",
+      data:doc
+    });
+  })
+  .catch(err=>{
+    res.status(400).json({
+      message: "Failed",
+      err,
+    });
+  })
 });
 
 router.post("/signup", (req, res) => {
