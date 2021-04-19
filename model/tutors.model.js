@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 var bcrypt = require('bcryptjs');
 var saltIteration = 10;
 var jwt = require('jsonwebtoken');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 
 const tutorsSchema = new Schema({
@@ -144,5 +145,18 @@ tutorsSchema.statics.findByToken = function(token,cb){
         cb(err,null)
     })
 }
-const parent = mongoose.model('tutors',tutorsSchema);
-module.exports = parent;
+
+
+const options = {
+    page: 1,
+    limit: 10,
+    collation: {
+      locale: 'en',
+    },
+  };
+tutorsSchema.plugin(mongoosePaginate)
+const tutors = mongoose.model('tutors',tutorsSchema);
+tutors.paginate({}, options, function (err, result) {
+    return result
+  });
+module.exports = tutors;

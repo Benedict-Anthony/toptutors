@@ -14,7 +14,7 @@ router.get("/", (req, res) => {
 
 router.get("/tutors",checkAuth, (req, res) => {
   dbTutors
-  .find()
+  .paginate()
   .then((doc)=>{
     res.status(200).json({
       message: "Successful",
