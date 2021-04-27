@@ -139,7 +139,4 @@ const options = {
   };
 parentSchema.plugin(mongoosePaginate)
 const parent = mongoose.model('parent',parentSchema);
-parent.paginate({}, options, function (err, result) {
-    console.log(result)
-  });
 module.exports = parent;

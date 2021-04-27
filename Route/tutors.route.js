@@ -1,8 +1,7 @@
 const express = require("express");
-const checkAuth = require("../middleware/check-auth")
+const tutorsAuth = require("../middleware/tutors-check-auth");
 const router = express.Router();
-var dbTutors = require("../model/tutors.model");
-
+var Tutors = require("../model/tutors.model");
 
 router.get("/", (req, res) => {
   res.send({
@@ -11,11 +10,10 @@ router.get("/", (req, res) => {
 });
 
 router.post("/signup", (req, res) => {
-    dbTutors
-    .findOne({ email: req.body.email })
+  Tutors.findOne({ email: req.body.email })
     .then((resp) => {
-        console.log(resp)
-      const users = new dbTutors({ ...req.body });
+      console.log(resp);
+      const users = new Tutors({ ...req.body });
       users
         .save()
         .then(() => {
@@ -40,17 +38,38 @@ router.post("/signup", (req, res) => {
     });
 });
 
-router.get("/:token", (req, res) => {
-  console.log(req.params.token)
-  dbTutors
-    .findOne({ token: req.params.token })
+//Profile Update
+router.put("/update", tutorsAuth, (req, res) => {
+  const token = req.headers.authorization;
+  const Token = token.split(" ")[1]; //Separate bearer from the token
+  Tutors
+    .findOneAndUpdate({ token: Token },{...req.body},{returnNewDocument: true})
+    .then((found_user) => {
+          res.status(200).json({
+            message: "Tutor Updated",
+          });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(400).json({
+        message: "This email already exist",
+        error,
+      });
+    });
+});
+
+router.get("/details", tutorsAuth, (req, res) => {
+  const token = req.headers.authorization;
+  const Token = token.split(" ")[1]; //Separate bearer from the token
+  Tutors
+    .findOne({ token: Token })
     .then((user) => {
-        console.log(user)
-        res.send(200, {
-          message: "Successfully retrieved user information",
-          id: user.id,
-          user:user,
-        });
+      console.log(user);
+      res.send(200, {
+        message: "Successfully retrieved tutors information",
+        id: user.id,
+        user: user,
+      });
     })
     .catch((error) => {
       console.log(error);
@@ -62,10 +81,12 @@ router.get("/:token", (req, res) => {
 });
 
 router.post("/login", (req, res) => {
-    var { email, password } = req.body;
-    dbTutors
-      .findOne({ email })
-      .then((doc) => {
+  console.log(req);
+  var { email, password } = req.body;
+  console.log(email);
+  Tutors.findOne({ email })
+    .then((doc) => {
+      if (doc) {
         doc.comparePassword(password, function (err, isMatch) {
           if (err) throw err;
           if (isMatch) {
@@ -76,7 +97,7 @@ router.post("/login", (req, res) => {
               res.send(200, {
                 message: "User loggedIn",
                 id: user.id,
-                token:user.token,
+                token: user.token,
               });
             });
           } else {
@@ -85,13 +106,19 @@ router.post("/login", (req, res) => {
             });
           }
         });
-      })
-      .catch((error) => {
-        res.json({
-          message: "logged in failed user not found",
-          error,
+      } else {
+        res.status(404).json({
+          doc,
         });
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      res.json({
+        message: "log in failed email is not registered",
+        error: error.response,
       });
-  });
+    });
+});
 
 module.exports = router;

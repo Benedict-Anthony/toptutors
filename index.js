@@ -1,7 +1,6 @@
 var express = require('express');
 var app = express();
 var userRoutes = require('./Route/users.route')
-const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 var adminRoutes = require('./Route/admin.route');
 var companyRoutes = require('./Route/company.route');
@@ -10,17 +9,17 @@ var tutorRoute = require('./Route/tutors.route');
 var config = require("./config")
 var cors = require('cors')
 var dotenv = require('dotenv');
-
-
 dotenv.config();
+
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 //app middleware sec
-app.use(bodyParser.json());
 app.use('/users',userRoutes);
 app.use('/admins',adminRoutes);
 app.use('/company',companyRoutes);
 app.use('/parent',parentRoute);
 app.use('/tutors',tutorRoute);
-
 
 //connect to mongodb
 mongoose.Promise = global.Promise

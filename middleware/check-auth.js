@@ -1,5 +1,6 @@
 const jsonwebtoken = require("jsonwebtoken")
 module.exports = (req,res,next)=>{
+    console.log(req.headers)
     try{
         const token = req.headers.authorization
         const Token = token.split(' ')[1] //Separate bearer from the token
