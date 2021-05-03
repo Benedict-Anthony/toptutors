@@ -5,109 +5,120 @@ var saltIteration = 10;
 var jwt = require("jsonwebtoken");
 const aggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
-const tutorsSchema = new Schema({
-  first_name: {
-    type: String,
-    required: true,
-    trim: true,
-    max: 100,
+const tutorsSchema = new Schema(
+  {
+    first_name: {
+      type: String,
+      required: true,
+      trim: true,
+      max: 100,
+    },
+    last_name: {
+      type: String,
+      required: true,
+      trim: true,
+      max: 100,
+    },
+    address: {
+      type: String,
+      required: false,
+      trim: true,
+      max: 300,
+    },
+    email: {
+      type: String,
+      trim: true,
+      required: true,
+      unique: true,
+      max: 200,
+    },
+    phone_number: {
+      type: String,
+      trim: true,
+      required: false,
+      max: 100,
+    },
+    country: {
+      type: String,
+      required: false,
+      trim: true,
+      max: 200,
+    },
+    state_of_residence: {
+      type: String,
+      required: false,
+      max: 100,
+    },
+    city: {
+      type: String,
+      required: false,
+      trim: true,
+      max: 100,
+    },
+    start_date: {
+      type: Date,
+      default: Date.now,
+      required: false,
+    },
+    relationship: {
+      type: String,
+      required: false,
+      max: 200,
+    },
+    sex: {
+      type: String,
+      required: false,
+      max: 100,
+      trim: true,
+      enum: ["Female", "Male"],
+    },
+    nationality: {
+      type: String,
+      required: false,
+      max: 150,
+    },
+    career_summary: {
+      type: String,
+      required: false,
+      max: 600,
+    },
+    subjects: [{
+      type: [String],
+      required: false,
+    }],
+    monthly_rate: {
+      type: String,
+      required: false,
+      trim: true,
+      max: 300,
+    },
+    password: {
+      type: String,
+      required: true,
+      trim:true
+    },
+    reset_link: {
+      type: String,
+      required: false,
+    },
+    token: {
+      type: String,
+      required: false,
+      max: 100,
+    },
+    is_verified:{
+      type:Boolean,
+      default:false
+    }
   },
-  last_name: {
-    type: String,
-    required: true,
-    trim: true,
-    max: 100,
-  },
-  address: {
-    type: String,
-    required: false,
-    trim: true,
-    max: 300,
-  },
-  email: {
-    type: String,
-    trim: true,
-    required: true,
-    unique: true,
-    max: 200,
-  },
-  phone_number: {
-    type: String,
-    trim: true,
-    required: false,
-    max: 100,
-  },
-  country: {
-    type: String,
-    required: false,
-    trim: true,
-    max: 200,
-  },
-  state_of_residence: {
-    type: String,
-    required: false,
-    max: 100,
-  },
-  city: {
-    type: String,
-    required: false,
-    trim: true,
-    max: 100,
-  },
-  start_date: {
-    type: Date, 
-    default: Date.now,
-    required: false,
-  },
-  relationship: {
-    type: String,
-    required: false,
-    max: 200,
-  },
-  sex: {
-    type: String,
-    required: false,
-    max: 100,
-    trim: true,
-    enum: ["Female", "Male"],
-  },
-  nationality: {
-    type: String,
-    required: false,
-    max: 150,
-  },
-  career_summary: {
-    type: String,
-    required: false,
-    max: 600,
-  },
-  subjects: {
-    type: String,
-    required: false,
-    max: 300,
-  },
-  monthly_rate: {
-    type: String,
-    required: false,
-    trim: true,
-    max: 300,
-  },
-  password: {
-    type: String,
-    required: true,
-    max: 300,
-  },
-  token: {
-    type: String,
-    required: false,
-    max: 100,
-  },
-});
+  { timestamps: true }
+);
 
 tutorsSchema.pre("save", function (next, doc) {
   var user = this;
   console.log(user.isNew);
-  if (user.isNew || user.isModified("password")) {
+  // || user.isModified("password")
+  if (user.isNew ) {
     //if the user is new or modified hash algorithm runs if it is
     bcrypt.genSalt(saltIteration, function (error, salt) {
       if (error) {
@@ -131,6 +142,7 @@ tutorsSchema.methods.comparePassword = function (candidatePassword, cb) {
     this.password,
     function (error, ismatch) {
       if (error) throw error;
+      console.log(ismatch)
       return cb(null, ismatch);
     }
   );
@@ -162,6 +174,23 @@ tutorsSchema.statics.findByToken = function (token, cb) {
     });
 };
 
+tutorsSchema.methods.updatePassword = function (password, cb) {
+  console.log(password)
+  var user = this;
+  bcrypt.genSalt(saltIteration, function (error, salt) {
+    if (error) {
+     throw error;
+    }
+    console.log(password);
+    bcrypt.hash(password, salt, function (err, hashedPassword) {
+      console.log(salt);
+      if (err) throw err;
+      user.password = hashedPassword;
+      console.log(hashedPassword)
+      cb(null, user);
+    });
+  });
+}; 
 tutorsSchema.plugin(aggregatePaginate);
 const dbTutors = mongoose.model("dbTutor", tutorsSchema);
 module.exports = dbTutors;

@@ -46,31 +46,6 @@ router.get("/search/tutors", checkAuth, (req, res) => {
       });
     });
 });
-router.get("/search/tutors", checkAuth, (req, res) => {
-  const options = {
-    page: req.query.page,
-    limit: req.query.limit,
-    nextpageurl: "",
-    prevpageurl: "",
-    _id: 1,
-    pagination: true,
-  };
-  console.log(aggregate);
-  dbTutors
-    .aggregatePaginate(aggregate, options)
-    .then((doc) => {
-      res.status(200).json({
-        message: "Successful",
-        data: doc,
-      });
-    })
-    .catch((err) => {
-      res.status(400).json({
-        message: "Failed",
-        err,
-      });
-    });
-});
 router.get("/tutors", checkAuth, (req, res) => {
   const options = {
     page: req.query.page,
@@ -204,4 +179,95 @@ router.post("/login", (req, res) => {
     });
 });
 
+router.put("/forgot-password", (req, res) => {
+  const { email } = req.body;
+  dbParents.findOne({ email }, (err, doc) => {
+    if (err || !doc) {
+      res.status(422).json({
+        message: "Email is not registered",
+        err,
+      });
+    }
+    if (doc) {
+      const token = jwt.sign(
+        { _id: doc._id },
+        process.env.password_reset_secret,
+        { expiresIn: "24h" }
+      );
+      var data = {
+        from: "toptutors@gmail.com",
+        to: email,
+        subject: "Password Reset",
+        html: `<h6>Please on the link to reset your password </h6>
+        <p>${process.env.clientUrl}/resetpassword/${token}</p>
+        `,
+      };
+      console.log(token)
+      if (token) {
+        return doc.updateOne({ resetLink: token }, (err, success) => {
+          if (err) {
+            res.status(422).json({
+              message: "Failed to save new token",
+              err,
+            });
+          }
+          if (success) {
+            mailgun.messages().send(data, function (error, body) {
+              if (error) {
+                console.log(error);
+                res.status(422).json({
+                  message: "Failed to process",
+                  error,
+                });
+              } else {
+                res.json({
+                  body,
+                });
+              }
+            });
+          }
+        });
+      }
+    }
+  });
+});
+router.put("/reset-password", (req, res) => {
+  const { password, token } = req.body;
+  try {
+    const decoded = jwt.verify(token, process.env.password_reset_secret);
+    dbParents.findOne({_id:decoded._id})
+    .then((doc)=>{
+      doc.updatePassword(password,(err,user)=>{
+        if(err){
+          console.log(err)
+          res.json({
+            err
+          })
+        }
+        if(user){
+          user.save()
+          .then(()=>{
+            res.status(200).json({
+              message:"password successfully updated",
+            })
+          })
+          .catch(err=>{
+            console.log(err)
+            res.status(422).json({
+              err
+            })
+          })
+        }
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+    })
+  } catch(error) {
+    res.json({
+      message: "Password reset failed",
+      error
+    });
+  }
+});
 module.exports = router;
