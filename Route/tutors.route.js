@@ -7,6 +7,8 @@ const { Messagekey } = require("../config");
 var api_key = Messagekey;
 var domain = "sandbox05003ae3bfa540d28c2ae96b4b665132.mailgun.org";
 const mailgun = require("mailgun-js")({ apiKey: api_key, domain });
+var dbBooking = require("../model/bookings.model");
+
 
 router.get("/", (req, res) => {
   res.send({
@@ -240,6 +242,38 @@ router.put("/reset-password", (req, res) => {
       error
     });
   }
+});
+router.get("/booking", (req, res) => {
+  const _id = req.query.id;
+  dbBooking
+    .find()
+    .populate({
+      path: "tutor",
+      select: "first_name last_name phone_number email",
+      match: {
+        _id: _id,
+      },
+    })
+    .then((data) => {
+     let processed = data.filter((document) => {
+        console.log(document.tutor.length)
+        if (document.tutor.length !== 0) {
+          return document;
+        }
+      });
+      console.log(processed)
+      res.status(200).json({
+        message: "Successfull",
+        result:processed,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).json({
+        err,
+        message: "Failed to fetch bookings",
+      });
+    });
 });
 
 module.exports = router;

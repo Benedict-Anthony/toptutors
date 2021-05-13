@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const mongoosePaginate = require("mongoose-paginate-v2");
+const aggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
 const bookingShema = new Schema({
   tutor: [{ type: Schema.ObjectId, ref: "dbTutor" }],
@@ -18,6 +18,8 @@ const bookingShema = new Schema({
   acceptance_date: Date,
   required: false,
 });
-var Booking = mongoose.model("booking", bookingShema);
+
+bookingShema.plugin(aggregatePaginate);
+var Booking = mongoose.model("booking", bookingShema)
 module.exports = Booking;
 

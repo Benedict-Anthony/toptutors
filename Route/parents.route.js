@@ -5,6 +5,7 @@ var parents = require("../model/parent.model");
 var dbTutors = require("../model/tutors.model");
 var dbBooking = require("../model/bookings.model");
 
+
 router.get("/search/tutors", checkAuth, (req, res) => {
   console.log(req.query.firstname);
   let aggregate;
@@ -310,17 +311,27 @@ router.get("/booking", (req, res) => {
   dbBooking
     .find()
     .populate({
-      path: "tutor",
+      path: "booked_by",
       select: "first_name last_name phone_number email",
-      options: { sort: { _id: -1 } },
+      match: {
+        _id: _id,
+      },
     })
     .then((data) => {
+     let processed = data.filter((document) => {
+        console.log(document.booked_by.length)
+        if (document.booked_by.length !== 0) {
+          return document;
+        }
+      });
+      console.log(processed)
       res.status(200).json({
         message: "Successfull",
-        data,
+        result:processed,
       });
     })
     .catch((err) => {
+      console.log(err);
       res.status(400).json({
         err,
         message: "Failed to fetch bookings",
