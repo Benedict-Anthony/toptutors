@@ -21,6 +21,17 @@ router.get("/search/tutors", checkAuth, (req, res) => {
     console.log(req.query.sex);
     aggregate = dbTutors.aggregate([{ $match: { sex: req.query.sex } }]);
   }
+  if (req.query.subject) {
+    aggregate = dbTutors.aggregate([
+      {
+        $match: {
+          subjects: {
+            $in: [req.query.subject],
+          },
+        },
+      },
+    ]);
+  }
   const options = {
     page: req.query.page,
     limit: req.query.limit,
@@ -317,7 +328,7 @@ router.get("/booking", (req, res) => {
     });
 });
 
-router.get("/details", checkAuth,(req, res) => {
+router.get("/details", checkAuth, (req, res) => {
   const token = req.headers.authorization;
   const Token = token.split(" ")[1]; //Separate bearer from the token
   parents
