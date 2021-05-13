@@ -25,8 +25,9 @@ const parentSchema = new Schema(
     email: {
       type: String,
       required: true,
+      trim:true,
       unique: true,
-      max: 100,
+      max: 300,
     },
     phone_number: {
       type: String,
@@ -78,24 +79,6 @@ const parentSchema = new Schema(
       type: String,
       required: false,
     },
-    bookings_list: [
-      {
-        tutor_name: String,
-        tutor_email:String,
-        tutors_subject:[String],
-        accepted:{
-            type:Boolean,
-            default:false
-        },
-        price:{
-            type:Number,
-            default:0
-        },
-        request_date:Date,
-        acceptance_date:Date,
-        required: false,
-      },
-    ],
     token: {
       type: String,
       required: false,
@@ -105,6 +88,7 @@ const parentSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    booking: [{ type: Schema.ObjectId, ref: "booking" }],
   },
   { timestamps: true }
 );
@@ -183,6 +167,7 @@ parentSchema.methods.updatePassword = function (password, cb) {
     });
   });
 };
+
 parentSchema.plugin(mongoosePaginate);
-const parent = mongoose.model("parent", parentSchema);
-module.exports = parent;
+const parents = mongoose.model("parent", parentSchema);
+module.exports = parents;

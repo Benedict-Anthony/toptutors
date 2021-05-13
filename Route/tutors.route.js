@@ -80,8 +80,8 @@ router.put("/update", tutorsAuth, (req, res) => {
     })
     .catch((error) => {
       console.log(error);
-      res.status(400).json({
-        message: "This email already exist",
+      res.status(401).json({
+        message: "Please sign in session expired",
         error,
       });
     });
