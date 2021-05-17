@@ -15,11 +15,9 @@ router.get("/search/tutors", checkAuth, (req, res) => {
     ]);
   }
   if (req.query.city) {
-    console.log(req.query.city);
     aggregate = dbTutors.aggregate([{ $match: { city: req.query.city } }]);
   }
   if (req.query.sex) {
-    console.log(req.query.sex);
     aggregate = dbTutors.aggregate([{ $match: { sex: req.query.sex } }]);
   }
   if (req.query.subject) {
@@ -136,7 +134,6 @@ router.post("/signup", (req, res) => {
         });
     });
 });
-
 router.post("/login", (req, res) => {
   let { email, password } = req.body;
   console.log(email);
@@ -274,7 +271,6 @@ router.put("/reset-password", (req, res) => {
     });
   }
 });
-
 //bookings
 router.post("/booking", checkAuth, (req, res) => {
   const { tutor } = req.body;
@@ -305,7 +301,6 @@ router.post("/booking", checkAuth, (req, res) => {
       console.log(err);
     });
 });
-
 router.get("/booking", (req, res) => {
   const _id = req.query.id;
   dbBooking
@@ -319,7 +314,6 @@ router.get("/booking", (req, res) => {
     })
     .then((data) => {
      let processed = data.filter((document) => {
-        console.log(document.booked_by.length)
         if (document.booked_by.length !== 0) {
           return document;
         }
@@ -338,7 +332,6 @@ router.get("/booking", (req, res) => {
       });
     });
 });
-
 router.get("/details", checkAuth, (req, res) => {
   const token = req.headers.authorization;
   const Token = token.split(" ")[1]; //Separate bearer from the token
