@@ -94,6 +94,7 @@ router.put("/add_category/:username", (req, res) => {
     });
   // console.log(doc)
 });
+
 router.put("/update_password/:id", (req, res) => {
   const id = req.params.id;
   dbUsers

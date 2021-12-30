@@ -11,6 +11,7 @@ var cors = require("cors");
 var dotenv = require("dotenv");
 dotenv.config();
 
+app.use(cors());
 app.use(
   express.json({
     inflate: true,
@@ -46,7 +47,7 @@ try {
 }
 
 const port = process.env.PORT || 8080;
-app.use(cors());
+
 app.listen(port, () => {
   console.log("server is running on port" + port);
 });
