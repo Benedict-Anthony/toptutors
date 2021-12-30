@@ -51,7 +51,7 @@ router.post("/signup", (req, res) => {
         })
         .catch((err) => {
           console.log(err);
-          res.json({
+          res.status(422).json({
             message: "Tutor creation failed",
             error: err,
           });
