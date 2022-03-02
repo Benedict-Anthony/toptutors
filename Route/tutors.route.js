@@ -11,9 +11,29 @@ var dbBooking = require("../model/bookings.model");
 
 
 router.get("/", (req, res) => {
-  res.send({
-    message: "message sending",
-  });
+  const options = {
+    // page: req.query.page,
+    // limit: req.query.limit,
+    // nextpageurl: "",
+    // prevpageurl: "",
+    pagination: true,
+  };
+  const aggregate = Tutors.aggregate();
+  Tutors
+    .aggregatePaginate(aggregate, options)
+    .then((doc) => {
+      console.log(doc)
+      res.status(200).json({
+        message: "Successful",
+        data: doc,
+      });
+    })
+    .catch((err) => {
+      res.status(400).json({
+        message: "Failed",
+        err,
+      });
+    });
 });
 
 router.post("/signup", (req, res) => {

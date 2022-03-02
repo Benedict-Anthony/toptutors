@@ -108,12 +108,10 @@ const tutorsSchema = new Schema(
       required: false,
       max: 100,
     },
-    institution: [
-      {
-        type: Array,
+    institution: {
+        type: [String],
         required: false,
-      },
-    ],
+    },
     is_verified: {
       type: Boolean,
       default: false,

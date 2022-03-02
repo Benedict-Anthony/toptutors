@@ -5,7 +5,6 @@ var parents = require("../model/parent.model");
 var dbTutors = require("../model/tutors.model");
 var dbBooking = require("../model/bookings.model");
 
-
 router.get("/search/tutors", checkAuth, (req, res) => {
   console.log(req.query.firstname);
   let aggregate;
@@ -36,7 +35,6 @@ router.get("/search/tutors", checkAuth, (req, res) => {
     limit: req.query.limit,
     nextpageurl: "",
     prevpageurl: "",
-    _id: 1,
     pagination: true,
   };
   console.log(aggregate);
@@ -56,15 +54,10 @@ router.get("/search/tutors", checkAuth, (req, res) => {
     });
 });
 router.get("/tutors", checkAuth, (req, res) => {
+  console.log("Here");
   const options = {
-    page: req.query.page,
-    limit: req.query.limit,
-    // sort: {
-    //   first_name: req.query.sort,
-    // },
-    nextpageurl: "",
-    prevpageurl: "",
-    _id: 1,
+    // page: req.query.page,
+    // limit: req.query.limit,
     pagination: true,
   };
   const aggregate = dbTutors.aggregate();
@@ -313,15 +306,15 @@ router.get("/booking", (req, res) => {
       },
     })
     .then((data) => {
-     let processed = data.filter((document) => {
+      let processed = data.filter((document) => {
         if (document.booked_by.length !== 0) {
           return document;
         }
       });
-      console.log(processed)
+      console.log(processed);
       res.status(200).json({
         message: "Successfull",
-        result:processed,
+        result: processed,
       });
     })
     .catch((err) => {
