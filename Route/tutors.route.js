@@ -204,6 +204,7 @@ router.put("/forgot-password", (req, res) => {
     }
   });
 });
+
 router.put("/reset-password", (req, res) => {
   const { password, token } = req.body;
   try {
@@ -243,6 +244,7 @@ router.put("/reset-password", (req, res) => {
     });
   }
 });
+
 router.get("/booking", (req, res) => {
   const _id = req.query.id;
   dbBooking

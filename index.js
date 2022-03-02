@@ -21,6 +21,7 @@ app.use(
     verify: undefined,
   })
 );
+
 app.use(express.urlencoded({ extended: false }));
 //app middleware sec
 // app.use('/users',userRoutes);

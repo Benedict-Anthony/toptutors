@@ -16,10 +16,14 @@ const bookingShema = new Schema({
   },
   request_date: Date,
   acceptance_date: Date,
+  status: {
+    type: String,
+    default: "Pending",
+    enum: ["Pending", "Accepted","Rejected"],
+  },
   required: false,
 });
 
 bookingShema.plugin(aggregatePaginate);
 var Booking = mongoose.model("booking", bookingShema)
 module.exports = Booking;
-
