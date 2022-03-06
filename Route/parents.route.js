@@ -31,11 +31,6 @@ router.get("/search/tutors", checkAuth, (req, res) => {
     ]);
   }
   const options = {
-    page: req.query.page,
-    limit: req.query.limit,
-    nextpageurl: "",
-    prevpageurl: "",
-    pagination: true,
   };
   console.log(aggregate);
   dbTutors
@@ -53,6 +48,7 @@ router.get("/search/tutors", checkAuth, (req, res) => {
       });
     });
 });
+
 router.get("/tutors", checkAuth, (req, res) => {
   console.log("Here");
   const options = {
@@ -76,6 +72,8 @@ router.get("/tutors", checkAuth, (req, res) => {
       });
     });
 });
+
+
 //filter
 router.get("/tutors/:keyword", checkAuth, (req, res) => {
   console.log(req.params.keyword);
@@ -97,6 +95,8 @@ router.get("/tutors/:keyword", checkAuth, (req, res) => {
       });
     });
 });
+
+
 router.post("/signup", (req, res) => {
   const { email } = req.body;
   parents
@@ -127,6 +127,7 @@ router.post("/signup", (req, res) => {
         });
     });
 });
+
 router.post("/login", (req, res) => {
   let { email, password } = req.body;
   console.log(email);
@@ -171,6 +172,7 @@ router.post("/login", (req, res) => {
       });
     });
 });
+
 router.put("/forgot-password", (req, res) => {
   const { email } = req.body;
   parents.findOne({ email }, (err, doc) => {
@@ -223,6 +225,7 @@ router.put("/forgot-password", (req, res) => {
     }
   });
 });
+
 router.put("/reset-password", (req, res) => {
   const { password, token } = req.body;
   try {
@@ -264,6 +267,7 @@ router.put("/reset-password", (req, res) => {
     });
   }
 });
+
 //bookings
 router.post("/booking", checkAuth, (req, res) => {
   const { tutor } = req.body;
