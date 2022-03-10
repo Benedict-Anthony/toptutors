@@ -88,6 +88,15 @@ const tutorsSchema = new Schema(
         required: false,
       },
     ],
+    level: [
+      {
+        type: [String],
+        required: false,
+        max: 100,
+        trim: true,
+        enum: ["Pre-School", "Basic","Secondary","Post-Secondary","All"],
+      },
+    ],
     monthly_rate: {
       type: String,
       required: false,
@@ -116,6 +125,11 @@ const tutorsSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    tutor_rating:{
+      type: Number,
+      required: false,
+      max: 100,
+    }
   },
   { timestamps: true }
 );

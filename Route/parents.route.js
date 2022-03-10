@@ -30,6 +30,17 @@ router.get("/search/tutors", checkAuth, (req, res) => {
       },
     ]);
   }
+  if (req.query.level) {
+    aggregate = dbTutors.aggregate([
+      {
+        $match: {
+          level: {
+            $in: [req.query.level],
+          },
+        },
+      },
+    ]);
+  }
   const options = {
   };
   console.log(aggregate);

@@ -14,16 +14,36 @@ const bookingShema = new Schema({
     type: Number,
     default: 0,
   },
+  level_being_applied_for: {
+    type: String,
+    required: false,
+  },
+  student_first_name: {
+    type: String,
+    required: false,
+  },
+  date_of_tuition: {
+    type: String,
+    required: false,
+  },
+  time_of_tuition: {
+    type: String,
+    required: false,
+  },
+  number_of_times: {
+    type: String,
+    required: false,
+  },
   request_date: Date,
   acceptance_date: Date,
   status: {
     type: String,
     default: "Pending",
-    enum: ["Pending", "Accepted","Rejected"],
+    enum: ["Pending", "Accepted", "Rejected"],
   },
   required: false,
 });
 
 bookingShema.plugin(aggregatePaginate);
-var Booking = mongoose.model("booking", bookingShema)
+var Booking = mongoose.model("booking", bookingShema);
 module.exports = Booking;

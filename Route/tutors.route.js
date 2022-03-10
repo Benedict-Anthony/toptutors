@@ -95,7 +95,7 @@ router.put("/update", tutorsAuth, (req, res) => {
     { ...req.body },
     { returnNewDocument: true }
   )
-    .then((found_user) => {
+    .then(() => {
       res.status(200).json({
         message: "Tutor Updated",
       });
@@ -172,6 +172,7 @@ router.post("/login", (req, res) => {
       });
     });
 });
+
 router.put("/forgot-password", (req, res) => {
   const { email } = req.body;
   Tutors.findOne({ email }, (err, doc) => {
