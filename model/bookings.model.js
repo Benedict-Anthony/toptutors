@@ -30,7 +30,7 @@ const bookingShema = new Schema({
     type: String,
     required: false,
   },
-  number_of_times: {
+  number_of_times_perweek: {
     type: String,
     required: false,
   },
