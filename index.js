@@ -9,6 +9,7 @@ var tutorRoute = require("./Route/tutors.route");
 var config = require("./config");
 var cors = require("cors");
 var dotenv = require("dotenv");
+const serverless = require('serverless-http');
 dotenv.config();
 
 app.use(cors());
@@ -48,7 +49,10 @@ try {
 }
 
 const port = process.env.PORT || 3000;
-
+//replicated for netlify
+app.use('/.netlify/functions/api', tutorRoute);
 app.listen(port, () => {
   console.log("server is running on port" + port);
 });
+
+module.exports.handler = serverless(app);
