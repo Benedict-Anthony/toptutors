@@ -85,8 +85,9 @@ const parentSchema = new Schema(
       max: 100,
     },
     is_verified: {
-      type: Boolean,
-      default: false,
+      type: String,
+      enum: ['false', 'true'],
+      default: 'false',
     },
     booking: [{ type: Schema.ObjectId, ref: "booking" }],
   },

@@ -122,8 +122,9 @@ const tutorsSchema = new Schema(
         required: false,
     },
     is_verified: {
-      type: Boolean,
-      default: false,
+      type: String,
+      enum: ['false', 'true'],
+      default: 'false',
     },
     tutor_rating:{
       type: Number,

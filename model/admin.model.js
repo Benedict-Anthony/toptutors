@@ -12,8 +12,12 @@ const adminSchema = new mongoose.Schema({
         type:String,
         enum:['super_admin','admin']
     },
-    token:String
-})
+    token:{
+        type: String
+    }
+},
+{ timestamps: true }
+)
 
 const admin = mongoose.model('admin',adminSchema);
 
