@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const referredUsers = new mongoose.Schema({
+const adminRefferedSchema = new mongoose.Schema({
   name: {
     type: String,
   },
@@ -22,6 +22,6 @@ const referredUsers = new mongoose.Schema({
 { timestamps: true }
 );
 
-const admin_referred = mongoose.model("Reffered", referredUsers);
+const AdminRefferedModel = mongoose.model("Reffered", adminRefferedSchema);
 
-module.exports = admin_referred;
+module.exports = AdminRefferedModel;

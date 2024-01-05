@@ -4,92 +4,97 @@ var bcrypt = require("bcryptjs");
 var saltIteration = 10;
 var jwt = require("jsonwebtoken");
 const mongoosePaginate = require("mongoose-paginate-v2");
+const UserModel = require("./user.model");
 
 const parentSchema = new Schema(
   {
-    first_name: {
-      type: String,
-      required: true,
-      max: 100,
-    },
-    last_name: {
-      type: String,
-      required: true,
-      max: 100,
-    },
-    address: {
-      type: String,
-      required: false,
-      max: 300,
-    },
-    email: {
-      type: String,
-      required: true,
-      trim:true,
-      unique: true,
-      max: 300,
-    },
-    phone_number: {
-      type: String,
-      required: false,
-      max: 100,
-    },
-    country: {
-      type: String,
-      required: false,
-      max: 200,
-    },
-    state_of_residence: {
-      type: String,
-      required: false,
-      max: 100,
-    },
-    city: {
-      type: String,
-      required: false,
-      max: 100,
-    },
-    start_date: {
-      type: Date,
-      required: false,
-      max: 100,
-    },
-    relationship: {
-      type: String,
-      required: false,
-      max: 100,
-    },
-    sex: {
-      type: String,
-      required: false,
-      max: 100,
-      enum: ["Female", "Male"],
-    },
-    nationality: {
-      type: String,
-      required: false,
-      max: 150,
-    },
-    password: {
-      type: String,
-      required: true,
-      max: 300,
-    },
-    reset_link: {
-      type: String,
-      required: false,
-    },
-    token: {
-      type: String,
-      required: false,
-      max: 100,
-    },
-    is_verified: {
-      type: String,
-      enum: ['false', 'true'],
-      default: 'false',
-    },
+    // first_name: {
+    //   type: String,
+    //   required: true,
+    //   max: 100,
+    // },
+    // last_name: {
+    //   type: String,
+    //   required: true,
+    //   max: 100,
+    // },
+    // address: {
+    //   type: String,
+    //   required: false,
+    //   max: 300,
+    // },
+    // email: {
+    //   type: String,
+    //   required: true,
+    //   trim:true,
+    //   unique: true,
+    //   max: 300,
+    // },
+    // phone_number: {
+    //   type: String,
+    //   required: false,
+    //   max: 100,
+    // },
+    // country: {
+    //   type: String,
+    //   required: false,
+    //   max: 200,
+    // },
+    // state_of_residence: {
+    //   type: String,
+    //   required: false,
+    //   max: 100,
+    // },
+    // city: {
+    //   type: String,
+    //   required: false,
+    //   max: 100,
+    // },
+    // start_date: {
+    //   type: Date,
+    //   required: false,
+    //   max: 100,
+    // },
+    // relationship: {
+    //   type: String,
+    //   required: false,
+    //   max: 100,
+    // },
+    // sex: {
+    //   type: String,
+    //   required: false,
+    //   max: 100,
+    //   enum: ["Female", "Male"],
+    // },
+    // nationality: {
+    //   type: String,
+    //   required: false,
+    //   max: 150,
+    // },
+    // password: {
+    //   type: String,
+    //   required: true,
+    //   max: 300,
+    // },
+    // reset_link: {
+    //   type: String,
+    //   required: false,
+    // },
+    // token: {
+    //   type: String,
+    //   required: false,
+    //   max: 100,
+    // },
+    // is_verified: {
+    //   type: Boolean,
+    //   default: false,
+    // },
     booking: [{ type: Schema.ObjectId, ref: "booking" }],
+    role: {
+      type: String,
+      default: 'parent',
+      enum: ['parent', 'tutor', 'student']
+    },
   },
   { timestamps: true }
 );
@@ -170,5 +175,5 @@ parentSchema.methods.updatePassword = function (password, cb) {
 };
 
 parentSchema.plugin(mongoosePaginate);
-const parents = mongoose.model("parent", parentSchema);
-module.exports = parents;
+const ParentModel = UserModel.discriminator("Parent", parentSchema);
+module.exports = ParentModel;

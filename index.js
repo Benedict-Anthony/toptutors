@@ -9,7 +9,7 @@ var tutorRoute = require("./routes/tutors.route");
 var config = require("./config");
 var cors = require("cors");
 var dotenv = require("dotenv");
-const serverless = require('serverless-http');
+const serverless = require("serverless-http");
 dotenv.config();
 
 app.use(cors());
@@ -26,9 +26,9 @@ app.use(
 app.use(express.urlencoded({ extended: false }));
 //app middleware sec
 // app.use('/users',userRoutes);
-app.get('/', (req, res)=>{
-  res.send('Welcome to Top Tutors...')
-})
+app.get("/", (req, res) => {
+  res.send("Welcome to Top Tutors...");
+});
 app.use("/admins", adminRoutes);
 app.use("/company", companyRoutes);
 app.use("/parent", parentRoute);
@@ -42,7 +42,7 @@ try {
     useNewUrlParser: true,
     // useFindAndModify: false,
     // useCreateIndex: true,
-  })
+  });
   // mongoose.set("useFindAndModify", false);
   let db = mongoose.connection;
   db.once("open", () => console.log("db is initailized"));
@@ -50,6 +50,7 @@ try {
 } catch (error) {
   console.log(error);
 }
+
 
 const port = process.env.PORT || 3000;
 //replicated for netlify

@@ -5,12 +5,12 @@ var saltIteration = 10;
 var jwt = require('jsonwebtoken');
 
 
-var studentSchema = new Schema({
-    name:String,
-    age:Number,
-    grade:Number,
-    _class:String,
-})
+// var studentSchema = new Schema({
+//     name:String,
+//     age:Number,
+//     grade:Number,
+//     _class:String,
+// })
 
 var userSchema = new Schema({
     first_name:{
@@ -27,7 +27,8 @@ var userSchema = new Schema({
     email:{
         type:String,
         unique:true,
-        lowercase:true
+        lowercase:true,
+        reuired: true
     },
     photo:{
         type:String,
@@ -39,7 +40,8 @@ var userSchema = new Schema({
     },
     password:{
         type:String,
-        required:true 
+        required:true,
+        max:100
     },
     sex:{
         type:String,
@@ -76,16 +78,20 @@ var userSchema = new Schema({
         required:false,
         max:150,
     },
-    tutor:[{ref:'parent',type:Schema.Types.ObjectId}],
+    // tutor:[{ref:'parent',type:Schema.Types.ObjectId}],
     ocupation:{
         type:String,
     },
-    category:[studentSchema],
-    role:{
-        type:String,
-        enum:["user"]
-    },
-    token:String,
+    // category:[studentSchema],
+    token: {
+        type: String,
+        required: false,
+        max: 100,
+      },
+    reset_link: {
+        type: String,
+        required: false,
+      },
 },
 { timestamps: true }
 )
@@ -139,6 +145,5 @@ var userSchema = new Schema({
         })
     }
 
-const student = mongoose.model('student',studentSchema);
-const Users = mongoose.model('Users',userSchema);
-module.exports = Users;
+const UserModel = mongoose.model('User',userSchema);
+module.exports = UserModel;
