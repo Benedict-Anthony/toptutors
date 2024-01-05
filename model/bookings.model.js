@@ -4,10 +4,11 @@ const aggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
 const bookingShema = new Schema({
   tutor: [{ type: Schema.ObjectId, ref: "dbTutor" }],
-  selected_subject: [String],
+  selected_subject: {type: [String]},
   accepted: {
-    type: Boolean,
-    default: false,
+    type: String,
+    enum: ['true', 'false'],
+    default: 'false',
   },
   booked_by: [{ type: Schema.ObjectId, ref: "parent" }],
   price: {
@@ -34,15 +35,20 @@ const bookingShema = new Schema({
     type: String,
     required: false,
   },
-  request_date: Date,
-  acceptance_date: Date,
+  request_date: {
+    type: Date
+  },
+  acceptance_date: {
+    type: Date
+  },
   status: {
     type: String,
     default: "Pending",
     enum: ["Pending", "Accepted", "Rejected"],
   },
-  required: false,
-});
+},
+{ timestamps: true }
+);
 
 bookingShema.plugin(aggregatePaginate);
 var Booking = mongoose.model("booking", bookingShema);

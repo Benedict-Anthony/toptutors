@@ -86,7 +86,9 @@ var userSchema = new Schema({
         enum:["user"]
     },
     token:String,
-})
+},
+{ timestamps: true }
+)
 
     userSchema.pre('save',function(next,doc){
         var user = this;

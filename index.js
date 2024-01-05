@@ -26,21 +26,24 @@ app.use(
 app.use(express.urlencoded({ extended: false }));
 //app middleware sec
 // app.use('/users',userRoutes);
+app.get('/', (req, res)=>{
+  res.send('Welcome to Top Tutors...')
+})
 app.use("/admins", adminRoutes);
 app.use("/company", companyRoutes);
 app.use("/parent", parentRoute);
 app.use("/tutors", tutorRoute);
 
 //connect to mongodb
-mongoose.Promise = global.Promise;
+// mongoose.Promise = global.Promise;
 try {
-  const uri =
-    "mongodb+srv://Honorableisrael:01uNyPvNjb0nSoWO@clusterhilary-vscri.mongodb.net/Toptutors?retryWrites=true&w=majority";
-  mongoose.connect(uri, {
+  mongoose.connect(process.env.DB_URL, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
-    useCreateIndex: true,
-  }) - mongoose.set("useFindAndModify", false);
+    // useFindAndModify: false,
+    // useCreateIndex: true,
+  })
+  // mongoose.set("useFindAndModify", false);
   let db = mongoose.connection;
   db.once("open", () => console.log("db is initailized"));
   db.on("err", () => console.log(err));
@@ -50,7 +53,7 @@ try {
 
 const port = process.env.PORT || 3000;
 //replicated for netlify
-app.use('/.netlify/functions/api', tutorRoute);
+// app.use('/.netlify/functions/api', tutorRoute);
 app.listen(port, () => {
   console.log("server is running on port" + port);
 });

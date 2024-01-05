@@ -51,7 +51,9 @@ var teacherSchema = new Schema({
         required:true,
         max:100
     }
-})
+},
+{ timestamps: true }
+)
 
 const teacher = mongoose.model('student',teacherSchema);
 module.exports = student
