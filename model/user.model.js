@@ -98,6 +98,9 @@ var userSchema = new Schema(
     },
     verification_code: {
         type: String
+    },
+    verification_expiration: {
+        type: String
     }
   },
   { timestamps: true }

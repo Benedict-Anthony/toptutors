@@ -42,8 +42,11 @@ class UserController extends BaseController {
         }else if(role=='parent'){
             newUser = await ParentModel.create({...req.body})
         }
+        const current_time = new Date()
+        const one_hour = new Date(current_time.getTime() + 1000 * 60 * 60)
         const verification_code = generateRandomCode()
         newUser.verification_code = verification_code
+        newUser.verification_expiration = one_hour
 
         await newUser.save()
         const token = await newUser.generateToken()
@@ -89,12 +92,19 @@ async verifyUser(req, res){
         if(!user){
             return UserController.failedResponse(res, 'User is not found.')
         }
+        const current_time = new Date().getTime()
+        const lapsing_time = new Date(user.verification_expiration)
+
+        if(lapsing_time < current_time){
+            return UserController.failedResponse(res, 'Your verification time has expired!')
+        }
 
         if(code !== user.verification_code){
             return UserController.failedResponse(res, 'Ensure you enter the right code')
         }
         user.is_verified = true
         user.verification_code = ''
+        user.verification_expiration = ''
         await user.save()
         const options = {
             from: "acehelp@Iklass Toptuors Limited",
