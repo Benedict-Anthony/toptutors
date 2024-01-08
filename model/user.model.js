@@ -1,144 +1,163 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 var Schema = mongoose.Schema;
-var bcrypt = require('bcryptjs');
+var bcrypt = require("bcryptjs");
 var saltIteration = 10;
-var jwt = require('jsonwebtoken');
+var jwt = require("jsonwebtoken");
 
+// var studentSchema = new Schema({
+//     name:String,
+//     age:Number,
+//     grade:Number,
+//     _class:String,
+// })
 
-var studentSchema = new Schema({
-    name:String,
-    age:Number,
-    grade:Number,
-    _class:String,
-})
-
-var userSchema = new Schema({
-    first_name:{
-        type:String,
-        required:true,
+var userSchema = new Schema(
+  {
+    first_name: {
+      type: String,
+      required: true,
     },
-    last_name:{
-        type:String,
-        required:true,
+    last_name: {
+      type: String,
+      required: true,
     },
-    phone_number:{
-        type:String,
+    phone_number: {
+      type: String,
     },
-    email:{
-        type:String,
-        unique:true,
-        lowercase:true
+    email: {
+      type: String,
+      unique: true,
+      lowercase: true,
+      reuired: true,
     },
-    photo:{
-        type:String,
+    photo: {
+      type: String,
     },
-    marital_status:{
-        type:String,
-        capitalize:true,
-        enum:["Single","Married","Other"],
+    marital_status: {
+      type: String,
+      capitalize: true,
+      enum: ["Single", "Married", "Other"],
     },
-    password:{
-        type:String,
-        required:true 
+    password: {
+      type: String,
+      required: true,
+      max: 100,
     },
-    sex:{
-        type:String,
-        capitalize:true,
-        enum:["Male","Female"],
+    sex: {
+      type: String,
+      capitalize: true,
+      enum: ["Male", "Female"],
     },
-    country:{
-        type:String,
-        required:false,
-        max:200
+    country: {
+      type: String,
+      required: false,
+      max: 200,
     },
-    state_of_residence:{
-        type:String,
-        required:false,
-        max:100
+    state_of_residence: {
+      type: String,
+      required: false,
+      max: 100,
     },
-    city:{
-        type:String,
-        required:false,
-        max:100  
+    city: {
+      type: String,
+      required: false,
+      max: 100,
     },
-    start_date:{
-        type:Date,
-        required:false,
-        max:100
+    start_date: {
+      type: Date,
+      required: false,
+      max: 100,
     },
-    relationship:{
-        type:String,
-        required:false,
-        max:100,
+    relationship: {
+      type: String,
+      required: false,
+      max: 100,
     },
     nationality: {
-        type:String,
-        required:false,
-        max:150,
+      type: String,
+      required: false,
+      max: 150,
     },
-    tutor:[{ref:'parent',type:Schema.Types.ObjectId}],
-    ocupation:{
-        type:String,
+    // tutor:[{ref:'parent',type:Schema.Types.ObjectId}],
+    ocupation: {
+      type: String,
     },
-    category:[studentSchema],
-    role:{
-        type:String,
-        enum:["user"]
+    is_verified: {
+        type: Boolean,
+        default: false,
+      },
+    // category:[studentSchema],
+    // token: {
+    //     type: String,
+    //     required: false,
+    //     max: 100,
+    //   },
+    reset_link: {
+      type: String,
+      required: false,
     },
-    token:String,
-},
-{ timestamps: true }
-)
+    verification_code: {
+        type: String
+    },
+    verification_expiration: {
+        type: String
+    }
+  },
+  { timestamps: true }
+);
 
-    userSchema.pre('save',function(next,doc){
-        var user = this;
-        console.log(user.isNew)
-        if(user.isNew || user.isModified('password')){  //if the user is new or modified hash algorithm runs if it is 
-            bcrypt.genSalt((saltIteration),function(error,salt){
-                if(error){
-                    return console.log(error)
-                }
-                bcrypt.hash(user.password,salt,function(err,hashedPassword){
-                    if (err) return next(err)
-                    user.password = hashedPassword;
-                    console.log( "schema new user password" + user.password )
-                    next();
-                })
-            })
-        }
-        else{
-            next()
-        }
+userSchema.pre("save", function (next, doc) {
+  var user = this;
+  if (user.isNew || user.isModified("password")) {
+    //if the user is new or modified hash algorithm runs if it is
+    bcrypt.genSalt(saltIteration, function (error, salt) {
+      if (error) {
+        return console.log(error);
+      }
+      bcrypt.hash(user.password, salt, function (err, hashedPassword) {
+        if (err) return next(err);
+        user.password = hashedPassword;
+        next();
+      });
+    });
+  } else {
+    next();
+  }
+});
+userSchema.methods.comparePassword = function (candidatePassword, cb) {
+  bcrypt.compare(
+    candidatePassword.toString(),
+    this.password,
+    function (error, ismatch) {
+      if (error) throw error;
+      return cb(null, ismatch);
+    }
+  );
+};
+//methods are applied
+userSchema.methods.generateToken = async function () {
+  var user = this;
+  var secretkey = process.env.SECRET_KEY;
+  const generatedToken = jwt.sign(
+    { id: user._id, email: user.email },
+    secretkey
+  );
+  // user.token = generatedToken;
+  // await user.save()
+  return generatedToken;
+};
+userSchema.statics.findByToken = function (token, cb) {
+  var user = this;
+  console.log(user);
+  user
+    .findOne({ token })
+    .then((doc) => {
+      cb(null, doc);
     })
-    userSchema.methods.comparePassword = function(candidatePassword,cb){
-        bcrypt.compare(candidatePassword.toString(),this.password,function(error,ismatch){
-            if(error) throw error
-            return cb(null,ismatch)
-        })
-    }
-    //methods are applied 
-    userSchema.methods.generateToken = function(cb){
-        var user = this;
-        var secretkey = 'specailsecretword';
-        const generatedToken = jwt.sign({id:user._id,email:user.email},secretkey);
-        user.token = generatedToken;
-        user.save((err,userWithUpdatedToken)=>{
-            if (err) return cb(err,null);
-            cb(null,userWithUpdatedToken);
-        })
-    }
-    userSchema.statics.findByToken = function(token,cb){
-        var user = this;
-        console.log(user)
-        user.findOne({token})
-        .then(doc=>{
-            cb(null,doc)
-        })
-        .catch(err=>{
-            cb(err,null)
-        })
-    }
+    .catch((err) => {
+      cb(err, null);
+    });
+};
 
-const student = mongoose.model('student',studentSchema);
-const Users = mongoose.model('Users',userSchema);
-module.exports = Users;
+const UserModel = mongoose.model("User", userSchema);
+module.exports = UserModel;

@@ -5,6 +5,7 @@ var bcrypt = require("bcryptjs");
 var userAuth = require("../middleware/userauth");
 
 var paginatedModel = require("../middleware/pagination_middleware");
+const UserController = require("../controllers/userController");
 
 const Users = [
   { name: "User 1", id: 1 },
@@ -33,33 +34,20 @@ router.get("/", paginatedModel(Users), (req, res) => {
   res.json(res.paginatedModel);
 });
 
-router.post("/user", (req, res) => {
-  console.log(req.body);
-  dbUsers.findOne({ email: req.body.email }, (err) => {
-    if (err) {
-      const users = new dbUsers({ ...req.body });
-      users
-        .save()
-        .then((response) => {
-          res.status(201).json({
-            message: "User created",
-            response,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-          res.json({
-            message: "User creation failed",
-            error: err,
-          });
-        });
-    } else {
-      res.status(400).json({
-        message: "This email already exist",
-      });
-    }
-  });
-});
+router.post("/", async (req, res)=>{
+  const userController = new UserController()
+  return await userController.registerUser(req, res)
+})
+
+router.put('/verify/:id', async(req, res)=>{
+  const userController = new UserController()
+  return await userController.verifyUser(req, res)
+})
+
+router.put('/resend/verification/', async(req, res)=>{
+  const userController = new UserController()
+  return await userController.resendVerfication(req, res)
+})
 
 //a route to update the user category schema
 router.put("/add_category/:username", (req, res) => {

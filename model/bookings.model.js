@@ -6,9 +6,8 @@ const bookingShema = new Schema({
   tutor: [{ type: Schema.ObjectId, ref: "dbTutor" }],
   selected_subject: {type: [String]},
   accepted: {
-    type: String,
-    enum: ['true', 'false'],
-    default: 'false',
+    type: Boolean,
+    default: false
   },
   booked_by: [{ type: Schema.ObjectId, ref: "parent" }],
   price: {
@@ -51,5 +50,5 @@ const bookingShema = new Schema({
 );
 
 bookingShema.plugin(aggregatePaginate);
-var Booking = mongoose.model("booking", bookingShema);
-module.exports = Booking;
+var BookingModel = mongoose.model("Booking", bookingShema);
+module.exports = BookingModel;

@@ -1,15 +1,16 @@
 var express = require("express");
 var app = express();
-var userRoutes = require("./Route/users.route");
+var userRoutes = require("./routes/users.route");
 const mongoose = require("mongoose");
-var adminRoutes = require("./Route/admin.route");
-var companyRoutes = require("./Route/company.route");
-var parentRoute = require("./Route/parents.route");
-var tutorRoute = require("./Route/tutors.route");
+var adminRoutes = require("./routes/admin.route");
+var companyRoutes = require("./routes/company.route");
+var parentRoute = require("./routes/parents.route");
+var tutorRoute = require("./routes/tutors.route");
+var userRoutes = require("./routes/users.route");
 var config = require("./config");
 var cors = require("cors");
 var dotenv = require("dotenv");
-const serverless = require('serverless-http');
+const serverless = require("serverless-http");
 dotenv.config();
 
 app.use(cors());
@@ -26,13 +27,14 @@ app.use(
 app.use(express.urlencoded({ extended: false }));
 //app middleware sec
 // app.use('/users',userRoutes);
-app.get('/', (req, res)=>{
-  res.send('Welcome to Top Tutors...')
-})
+app.get("/", (req, res) => {
+  res.send("Welcome to Top Tutors...");
+});
 app.use("/admins", adminRoutes);
 app.use("/company", companyRoutes);
 app.use("/parent", parentRoute);
 app.use("/tutors", tutorRoute);
+app.use("/api/users", userRoutes);
 
 //connect to mongodb
 // mongoose.Promise = global.Promise;
@@ -41,8 +43,8 @@ try {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     // useFindAndModify: false,
-    // useCreateIndex: true,
-  })
+    useCreateIndex: true,
+  });
   // mongoose.set("useFindAndModify", false);
   let db = mongoose.connection;
   db.once("open", () => console.log("db is initailized"));
@@ -50,6 +52,7 @@ try {
 } catch (error) {
   console.log(error);
 }
+
 
 const port = process.env.PORT || 3000;
 //replicated for netlify
