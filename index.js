@@ -6,6 +6,7 @@ var adminRoutes = require("./routes/admin.route");
 var companyRoutes = require("./routes/company.route");
 var parentRoute = require("./routes/parents.route");
 var tutorRoute = require("./routes/tutors.route");
+var userRoutes = require("./routes/users.route");
 var config = require("./config");
 var cors = require("cors");
 var dotenv = require("dotenv");
@@ -33,6 +34,7 @@ app.use("/admins", adminRoutes);
 app.use("/company", companyRoutes);
 app.use("/parent", parentRoute);
 app.use("/tutors", tutorRoute);
+app.use("/api/users", userRoutes);
 
 //connect to mongodb
 // mongoose.Promise = global.Promise;
@@ -41,7 +43,7 @@ try {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     // useFindAndModify: false,
-    // useCreateIndex: true,
+    useCreateIndex: true,
   });
   // mongoose.set("useFindAndModify", false);
   let db = mongoose.connection;

@@ -122,10 +122,6 @@ const tutorsSchema = new Schema(
       type: [String],
       required: false,
     },
-    is_verified: {
-      type: Boolean,
-      default: false,
-    },
     tutor_rating: {
       type: Number,
       required: false,
@@ -142,7 +138,6 @@ const tutorsSchema = new Schema(
 
 tutorsSchema.pre("save", function (next, doc) {
   var user = this;
-  console.log(user.isNew);
   // || user.isModified("password")
   if (user.isNew) {
     //if the user is new or modified hash algorithm runs if it is
@@ -153,7 +148,6 @@ tutorsSchema.pre("save", function (next, doc) {
       bcrypt.hash(user.password, salt, function (err, hashedPassword) {
         if (err) return next(err);
         user.password = hashedPassword;
-        console.log("schema new user password" + user.password);
         next();
       });
     });
@@ -174,18 +168,16 @@ tutorsSchema.methods.comparePassword = function (candidatePassword, cb) {
   );
 };
 //methods are applied
-tutorsSchema.methods.generateToken = function (cb) {
+tutorsSchema.methods.generateToken = async function (cb) {
   var user = this;
   var secretkey = process.env.auth_secretkey;
   const generatedToken = jwt.sign(
-    { id: user._id, email: user.email, type: "tutor" },
+    { id: user._id, email: user.email, type: user.role },
     secretkey
   );
-  user.token = generatedToken;
-  user.save((err, userWithUpdatedToken) => {
-    if (err) return cb(err, null);
-    cb(null, userWithUpdatedToken);
-  });
+  // user.token = generatedToken;
+  // await user.save()
+  return generatedToken
 };
 tutorsSchema.statics.findByToken = function (token, cb) {
   var user = this;

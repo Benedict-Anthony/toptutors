@@ -101,7 +101,6 @@ const parentSchema = new Schema(
 
 parentSchema.pre("save", function (next, doc) {
   var user = this;
-  console.log(user.isNew);
   if (user.isNew) {
     //if the user is new or modified hash algorithm runs if it is
     bcrypt.genSalt(saltIteration, function (error, salt) {
@@ -111,7 +110,6 @@ parentSchema.pre("save", function (next, doc) {
       bcrypt.hash(user.password, salt, function (err, hashedPassword) {
         if (err) return next(err);
         user.password = hashedPassword;
-        console.log("schema new user password" + user.password);
         next();
       });
     });
@@ -131,18 +129,16 @@ parentSchema.methods.comparePassword = function (candidatePassword, cb) {
   );
 };
 //methods are applied
-parentSchema.methods.generateToken = function (cb) {
+parentSchema.methods.generateToken = async function (cb) {
   var user = this;
   var secretkey = process.env.auth_secretkey;
   const generatedToken = jwt.sign(
-    { id: user._id, email: user.email, type: "parent" },
+    { id: user._id, email: user.email, type: user.role },
     secretkey
   );
-  user.token = generatedToken;
-  user.save((err, userWithUpdatedToken) => {
-    if (err) return cb(err, null);
-    cb(null, userWithUpdatedToken);
-  });
+  // user.token = generatedToken;
+  // await user.save()
+  return generatedToken
 };
 parentSchema.statics.findByToken = function (token, cb) {
   var user = this;

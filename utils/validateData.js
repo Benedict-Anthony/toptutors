@@ -23,10 +23,12 @@ async function validateData(body, rules, customMessage) {
       const errors = validation.errors.errors;
       let error = "";
       for (let err in errors) {
-        error = `${err}: ${errors[err][0]}`;
+        error = `${errors[err][0]}`;
         break;
       }
-      return error;
+      return {success: false, error};
+    }else{
+      return {success: true, error: null}
     }
   } catch (error) {
     console.log(error, "the error");
