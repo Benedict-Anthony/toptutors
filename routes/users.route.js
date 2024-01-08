@@ -44,6 +44,11 @@ router.put('/verify/:id', async(req, res)=>{
   return await userController.verifyUser(req, res)
 })
 
+router.put('/resend/verification/', async(req, res)=>{
+  const userController = new UserController()
+  return await userController.resendVerfication(req, res)
+})
+
 //a route to update the user category schema
 router.put("/add_category/:username", (req, res) => {
   let user_name = req.params.username;
