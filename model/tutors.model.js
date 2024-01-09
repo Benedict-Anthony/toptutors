@@ -136,79 +136,78 @@ const tutorsSchema = new Schema(
   { timestamps: true }
 );
 
-tutorsSchema.pre("save", function (next, doc) {
-  var user = this;
-  // || user.isModified("password")
-  if (user.isNew) {
-    //if the user is new or modified hash algorithm runs if it is
-    bcrypt.genSalt(saltIteration, function (error, salt) {
-      if (error) {
-        return console.log(error);
-      }
-      bcrypt.hash(user.password, salt, function (err, hashedPassword) {
-        if (err) return next(err);
-        user.password = hashedPassword;
-        next();
-      });
-    });
-  } else {
-    next();
-  }
-});
+// tutorsSchema.pre("save", function (next, doc) {
+//   var user = this;
+//   // || user.isModified("password")
+//   if (user.isNew) {
+//     //if the user is new or modified hash algorithm runs if it is
+//     bcrypt.genSalt(saltIteration, function (error, salt) {
+//       if (error) {
+//         return console.log(error);
+//       }
+//       bcrypt.hash(user.password, salt, function (err, hashedPassword) {
+//         if (err) return next(err);
+//         user.password = hashedPassword;
+//         next();
+//       });
+//     });
+//   } else {
+//     next();
+//   }
+// });
+// tutorsSchema.methods.comparePassword = async function (candidatePassword) {
+//   try {
+//     const isMatch = await bcrypt.compare(this.password, candidatePassword)
+//     console.log(isMatch,'the match', this.password, candidatePassword)
+//     return isMatch
+//   } catch (error) {
+//     console.log(error)
+//   }
+// };
 
-tutorsSchema.methods.comparePassword = function (candidatePassword, cb) {
-  bcrypt.compare(
-    candidatePassword.toString(),
-    this.password,
-    function (error, ismatch) {
-      if (error) throw error;
-      console.log(ismatch);
-      return cb(null, ismatch);
-    }
-  );
-};
-//methods are applied
-tutorsSchema.methods.generateToken = async function (cb) {
-  var user = this;
-  var secretkey = process.env.auth_secretkey;
-  const generatedToken = jwt.sign(
-    { id: user._id, email: user.email, type: user.role },
-    secretkey
-  );
-  // user.token = generatedToken;
-  // await user.save()
-  return generatedToken
-};
-tutorsSchema.statics.findByToken = function (token, cb) {
-  var user = this;
-  console.log(user);
-  user
-    .findOne({ token })
-    .then((doc) => {
-      cb(null, doc);
-    })
-    .catch((err) => {
-      cb(err, null);
-    });
-};
 
-tutorsSchema.methods.updatePassword = function (password, cb) {
-  console.log(password);
-  var user = this;
-  bcrypt.genSalt(saltIteration, function (error, salt) {
-    if (error) {
-      throw error;
-    }
-    console.log(password);
-    bcrypt.hash(password, salt, function (err, hashedPassword) {
-      console.log(salt);
-      if (err) throw err;
-      user.password = hashedPassword;
-      console.log(hashedPassword);
-      cb(null, user);
-    });
-  });
-};
+// //methods are applied
+// tutorsSchema.methods.generateToken = async function (cb) {
+//   var user = this;
+//   var secretkey = process.env.auth_secretkey;
+//   const generatedToken = jwt.sign(
+//     { id: user._id, email: user.email, type: user.role },
+//     secretkey
+//   );
+//   // user.token = generatedToken;
+//   // await user.save()
+//   return generatedToken
+// };
+// tutorsSchema.statics.findByToken = function (token, cb) {
+//   var user = this;
+//   console.log(user);
+//   user
+//     .findOne({ token })
+//     .then((doc) => {
+//       cb(null, doc);
+//     })
+//     .catch((err) => {
+//       cb(err, null);
+//     });
+// };
+
+// tutorsSchema.methods.updatePassword = function (password, cb) {
+//   console.log(password);
+//   var user = this;
+//   bcrypt.genSalt(saltIteration, function (error, salt) {
+//     if (error) {
+//       throw error;
+//     }
+//     console.log(password);
+//     bcrypt.hash(password, salt, function (err, hashedPassword) {
+//       console.log(salt);
+//       if (err) throw err;
+//       user.password = hashedPassword;
+//       console.log(hashedPassword);
+//       cb(null, user);
+//     });
+//   });
+// };
 tutorsSchema.plugin(aggregatePaginate);
 const TutorModel = UserModel.discriminator("Tutor", tutorsSchema);
 module.exports = TutorModel;

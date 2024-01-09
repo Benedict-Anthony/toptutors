@@ -1,12 +1,16 @@
 const verifiedMail = require("../email_templates/verified");
 const welcomeMail = require("../email_templates/welcome");
+const tempLock = require("../email_templates/temp_lock");
+const LockedAccountModel = require("../model/locked_accounts.model");
 const ParentModel = require("../model/parent.model");
 const TutorModel = require("../model/tutors.model");
 const UserModel = require("../model/user.model");
+const checkCredentialAttempt = require("../utils/checkCredentialAttempt");
 const emailService = require("../utils/emailService");
 const generateRandomCode = require("../utils/generateRandomCode");
 const validateData = require("../utils/validateData");
 const BaseController = require("./base");
+const unlockAccount = require("../email_templates/unlock_account");
 
 class UserController extends BaseController {
   async registerUser(req, res) {
@@ -147,7 +151,6 @@ class UserController extends BaseController {
 
   async resendVerfication(req, res) {
     try {
-
       const postData = req.body;
       const { email } = postData;
       const postRule = {
@@ -192,7 +195,10 @@ class UserController extends BaseController {
       };
       await emailService(options);
 
-      return UserController.successResponse(res, `Verfication sent to ${email}`);
+      return UserController.successResponse(
+        res,
+        `Verfication sent to ${email}`
+      );
     } catch (error) {
       return UserController.failedResponse(
         res,
@@ -201,6 +207,92 @@ class UserController extends BaseController {
     }
   }
 
+  async login(req, res) {
+    try {
+      const postData = req.body;
+      const { email, password } = postData;
+      const postRule = {
+        email: "required|email",
+        password: "required|string"
+      };
+      const postCustomMessage = {
+        required: ":attribute is required",
+        string: ":attribute must be a string",
+      };
+
+      const validationResponse = await validateData(
+        postData,
+        postRule,
+        postCustomMessage
+      );
+      if (!validationResponse.success) {
+        return UserController.failedResponse(res, validationResponse.error);
+      }
+      const userExists = await UserModel.findOne({email})
+      if(!userExists){
+        return UserController.failedResponse(res, 'User does not exist. Please register')
+      }
+      if(!userExists.is_verified){
+        return UserController.failedResponse(res, 'Please verify your account to login')
+      }
+      const isMatch = await userExists.comparePassword(password)
+      if(userExists.failed_attempts >= 7){
+        const user_been_locked = await LockedAccountModel.findOne({userId: userExists._id})
+        if(user_been_locked && user_been_locked.activate_time && user_been_locked.attempt_time){
+          const curr_time = new Date()
+          if(curr_time > user_been_locked.activate_time){
+            const result = await checkCredentialAttempt(res, userExists, isMatch)
+            if(!result.success){
+              return UserController.failedResponse(res, result.message)
+            }else{
+              userExists.failed_attempts = 0
+              await userExists.save()
+              const options = {
+                from: "acehelp@Iklass Toptuors Limited",
+                to: userExists.email,
+                subject: "Account unlocked",
+                html: unlockAccount(userExists.first_name),
+              };
+              await emailService(options);
+              await LockedAccountModel.findOneAndDelete({userId: userExists._id})
+              return UserController.successResponse(res, result.message)
+            }
+          }else{
+            return UserController.failedResponse(res,'Please try again after 1 hour')
+          }
+        }
+        const current_time = new Date();
+        const one_hour = new Date(current_time.getTime() + 1000 * 60 * 60);
+        if(!user_been_locked){
+          await LockedAccountModel.create({userId: userExists._id, activate_time: one_hour})
+        }
+        const options = {
+          from: "acehelp@Iklass Toptuors Limited",
+          to: userExists.email,
+          subject: "Account temporarily locked",
+          html: tempLock(userExists.first_name),
+        };
+        await emailService(options);
+
+        return UserController.failedResponse(res, 'Account has been deactivated due to multiple attempts. An email has been sent to you')
+      }
+      const result = await checkCredentialAttempt(res, userExists, isMatch)
+      if(!result.success){
+        return UserController.failedResponse(res, result.message)
+      }else{
+        userExists.failed_attempts = 0
+        await userExists.save()
+        return UserController.successResponse(res, result.message)
+      }
+
+    } catch (error) {
+      console.log(error)
+      return UserController.failedResponse(
+        res,
+        "Something went wrong. Try again later"
+      );
+    }
+  }
 }
 
 module.exports = UserController;
