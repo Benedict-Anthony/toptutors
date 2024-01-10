@@ -63,6 +63,11 @@ router.put('/reset/:id', async(req, res)=>{
   return await userController.resetPassword(req, res)
 })
 
+router.get('/dashboard/stat', [userAuth], async(req, res)=>{
+  const userController = new UserController()
+  return await userController.dashboardStat(req, res)
+})
+
 
 
 
@@ -136,30 +141,30 @@ router.put("/update_password/:id", (req, res) => {
 });
 
 //get all users
-router.get("/user", userAuth(), (req, res) => {
-  dbUsers
-    .find()
-    .then((response) => {
-      res.json(response);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.json(err);
-    });
-});
+// router.get("/user", userAuth(), (req, res) => {
+//   dbUsers
+//     .find()
+//     .then((response) => {
+//       res.json(response);
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//       res.json(err);
+//     });
+// });
 
-router.get("/profile", (req, res) => {
-  const token = req.headers.token;
-  token
-    ? dbUsers.findByToken(token, (err, user) => {
-        if (err) throw err;
-        res.json(200, {
-          user,
-        });
-      })
-    : res.send(400, {
-        message: "Authentication required",
-      });
-});
+// router.get("/profile", (req, res) => {
+//   const token = req.headers.token;
+//   token
+//     ? dbUsers.findByToken(token, (err, user) => {
+//         if (err) throw err;
+//         res.json(200, {
+//           user,
+//         });
+//       })
+//     : res.send(400, {
+//         message: "Authentication required",
+//       });
+// });
 
 module.exports = router;

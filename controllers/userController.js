@@ -66,7 +66,7 @@ class UserController extends BaseController {
       delete newUser.password;
       const link = `${process.env.hostAddress}/verify/${newUser._id}`;
       const options = {
-        from: "acehelp@Iklass Toptuors Limited",
+        from: "acehelp@Iklass Toptutors Limited",
         to: email,
         subject: "Getting started",
         html: welcomeMail(newUser.first_name, link, verification_code),
@@ -134,7 +134,7 @@ class UserController extends BaseController {
       user.verification_expiration = "";
       await user.save();
       const options = {
-        from: "acehelp@Iklass Toptuors Limited",
+        from: "acehelp@Iklass Toptutors Limited",
         to: user.email,
         subject: "Getting started",
         html: verifiedMail(user.first_name),
@@ -190,7 +190,7 @@ class UserController extends BaseController {
 
       const link = `${process.env.hostAddress}/verify/${userExists._id}`;
       const options = {
-        from: "acehelp@Iklass Toptuors Limited",
+        from: "acehelp@Iklass Toptutors Limited",
         to: email,
         subject: "Verification link sent",
         html: welcomeMail(userExists.first_name, link, verification_code),
@@ -199,7 +199,7 @@ class UserController extends BaseController {
 
       return UserController.successResponse(
         res,
-        `Verfication sent to ${email}`
+        `Verfication link sent to ${email}`
       );
     } catch (error) {
       return UserController.failedServerResponse(
@@ -250,7 +250,7 @@ class UserController extends BaseController {
               userExists.failed_attempts = 0
               await userExists.save()
               const options = {
-                from: "acehelp@Iklass Toptuors Limited",
+                from: "acehelp@Iklass Toptutors Limited",
                 to: userExists.email,
                 subject: "Account unlocked",
                 html: unlockAccount(userExists.first_name),
@@ -269,7 +269,7 @@ class UserController extends BaseController {
           await LockedAccountModel.create({userId: userExists._id, activate_time: one_hour})
         }
         const options = {
-          from: "acehelp@Iklass Toptuors Limited",
+          from: "acehelp@Iklass Toptutors Limited",
           to: userExists.email,
           subject: "Account temporarily locked",
           html: tempLock(userExists.first_name),
@@ -326,7 +326,7 @@ class UserController extends BaseController {
 
       reset_link = `${process.env.hostAddress}/api/users/reset/${user._id}`;
       const options = {
-        from: "acehelp@Iklass Toptuors Limited",
+        from: "acehelp@Iklass Toptutors Limited",
         to: email,
         subject: "Request to change password",
         html: resetPassword(user.first_name, reset_link),
@@ -379,7 +379,7 @@ class UserController extends BaseController {
       await user.save()
 
       const options = {
-        from: "acehelp@Iklass Toptuors Limited",
+        from: "acehelp@Iklass Toptutors Limited",
         to: user.email,
         subject: "Password changed",
         html: passwordChanged(user.first_name),
@@ -390,6 +390,14 @@ class UserController extends BaseController {
     } catch (error) {
       console.log(error, 'the error')
       return UserController.failedServerResponse(res, 'Something went wrong. Please try again later')
+    }
+  }
+
+  async dashboardStat(req, res){
+    try {
+
+    } catch (error) {
+      return UserController.failedServerResponse(res, 'Something went wrong. Please try again later.')
     }
   }
 }

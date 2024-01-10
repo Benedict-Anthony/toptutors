@@ -136,7 +136,8 @@ userSchema.methods.generateToken = async function () {
   var secretkey = process.env.SECRET_KEY;
   const generatedToken = jwt.sign(
     { id: user._id, email: user.email },
-    secretkey
+    secretkey,
+    {expiresIn: '3h'}
   );
   // user.token = generatedToken;
   // await user.save()
