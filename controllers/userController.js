@@ -11,6 +11,8 @@ const generateRandomCode = require("../utils/generateRandomCode");
 const validateData = require("../utils/validateData");
 const BaseController = require("./base");
 const unlockAccount = require("../email_templates/unlock_account");
+const resetPassword = require("../email_templates/reset_password");
+const passwordChanged = require("../email_templates/password_changed");
 
 class UserController extends BaseController {
   async registerUser(req, res) {
@@ -73,7 +75,7 @@ class UserController extends BaseController {
 
       return UserController.successResponse(res, { token, ...newUser });
     } catch (error) {
-      return UserController.failedResponse(
+      return UserController.failedServerResponse(
         res,
         "Something went wrong. Try again later"
       );
@@ -142,7 +144,7 @@ class UserController extends BaseController {
       return UserController.successResponse(res, "Verfication successful");
     } catch (error) {
       console.log(error);
-      return UserController.failedResponse(
+      return UserController.failedServerResponse(
         res,
         "Something went wrong. Try again later"
       );
@@ -200,7 +202,7 @@ class UserController extends BaseController {
         `Verfication sent to ${email}`
       );
     } catch (error) {
-      return UserController.failedResponse(
+      return UserController.failedServerResponse(
         res,
         "Something went wrong. Try again later"
       );
@@ -287,10 +289,107 @@ class UserController extends BaseController {
 
     } catch (error) {
       console.log(error)
-      return UserController.failedResponse(
+      return UserController.failedServerResponse(
         res,
         "Something went wrong. Try again later"
       );
+    }
+  }
+
+  async forgotPassword(req, res){
+    try {
+
+      const postData = req.body;
+      const { email } = postData;
+      const postRule = {
+        email: "required|email",
+      };
+      const postCustomMessage = {
+        required: ":attribute is required",
+        string: ":attribute must be a string",
+      };
+
+      const validationResponse = await validateData(
+        postData,
+        postRule,
+        postCustomMessage
+      );
+      if (!validationResponse.success) {
+        return UserController.failedResponse(res, validationResponse.error);
+      }
+
+      let reset_link
+      const user = await UserModel.findOne({email})
+      if(!user){
+        UserController.failedResponse(res,'User does not exist.')
+      }
+
+      reset_link = `${process.env.hostAddress}/api/users/reset/${user._id}`;
+      const options = {
+        from: "acehelp@Iklass Toptuors Limited",
+        to: email,
+        subject: "Request to change password",
+        html: resetPassword(user.first_name, reset_link),
+      };
+      await emailService(options);
+      
+    } catch (error) {
+     return UserController.failedServerResponse(res, 'Something went wrong. Please try again later.') 
+    }
+  }
+
+  async resetPassword(req, res){
+    try {
+      const {id: userId} = req.params
+
+      const postData = req.body;
+      const { password, c_password } = postData;
+      const postRule = {
+        password: "required|string",
+        c_password: "required|string"
+      };
+      const postCustomMessage = {
+        required: ":attribute is required",
+        string: ":attribute must be a string",
+      };
+
+      const validationResponse = await validateData(
+        postData,
+        postRule,
+        postCustomMessage
+      );
+      if (!validationResponse.success) {
+        return UserController.failedResponse(res, validationResponse.error);
+      }
+
+      if(!userId){
+        return UserController.failedResponse(res,'Please provide a user ID')
+      }
+
+      const user = await UserModel.findById(userId)
+      if(!user){
+        return UserController.failedResponse(res, 'User is not found')
+      }
+
+      if(password != c_password){
+        return UserController.failedResponse(res, 'Please ensure that your passwords match')
+      }
+
+      user.password = password
+      await user.save()
+
+      const options = {
+        from: "acehelp@Iklass Toptuors Limited",
+        to: user.email,
+        subject: "Password changed",
+        html: passwordChanged(user.first_name),
+      };
+      await emailService(options);
+
+      return UserController.successResponse(res, 'Password has been reset successfully.')
+    } catch (error) {
+      console.log(error, 'the error')
+      return UserController.failedServerResponse(res, 'Something went wrong. Please try again later')
     }
   }
 }

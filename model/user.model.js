@@ -48,11 +48,6 @@ var userSchema = new Schema(
       capitalize: true,
       enum: ["Male", "Female"],
     },
-    country: {
-      type: String,
-      required: false,
-      max: 200,
-    },
     state_of_residence: {
       type: String,
       required: false,
