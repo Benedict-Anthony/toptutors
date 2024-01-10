@@ -101,38 +101,39 @@ var userSchema = new Schema(
     },
     verification_expiration: {
         type: String
+    },
+    failed_attempts: {
+      type: Number,
+      default: 0
     }
   },
   { timestamps: true }
 );
 
-userSchema.pre("save", function (next, doc) {
+userSchema.pre("save", async function (next) {
   var user = this;
-  if (user.isNew || user.isModified("password")) {
-    //if the user is new or modified hash algorithm runs if it is
-    bcrypt.genSalt(saltIteration, function (error, salt) {
-      if (error) {
-        return console.log(error);
-      }
-      bcrypt.hash(user.password, salt, function (err, hashedPassword) {
-        if (err) return next(err);
-        user.password = hashedPassword;
-        next();
-      });
-    });
-  } else {
-    next();
-  }
-});
-userSchema.methods.comparePassword = function (candidatePassword, cb) {
-  bcrypt.compare(
-    candidatePassword.toString(),
-    this.password,
-    function (error, ismatch) {
-      if (error) throw error;
-      return cb(null, ismatch);
+
+try {
+    if (user.isNew || user.isModified("password")) {
+      //if the user is new or modified hash algorithm runs if it is
+      const salt = await bcrypt.genSalt(saltIteration)
+      const hashedPassword = await bcrypt.hash(user.password, salt)
+      this.password = hashedPassword
+      next()
+    } else {
+      next();
     }
-  );
+} catch (error) {
+  next(error)
+}
+});
+
+userSchema.methods.comparePassword = async function(candidatePassword) {
+  try {
+    return await bcrypt.compare(candidatePassword, this.password)
+  } catch (error) {
+    console.log(error)
+  }
 };
 //methods are applied
 userSchema.methods.generateToken = async function () {

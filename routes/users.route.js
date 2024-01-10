@@ -34,7 +34,7 @@ router.get("/", paginatedModel(Users), (req, res) => {
   res.json(res.paginatedModel);
 });
 
-router.post("/", async (req, res)=>{
+router.post("/register", async (req, res)=>{
   const userController = new UserController()
   return await userController.registerUser(req, res)
 })
@@ -47,6 +47,11 @@ router.put('/verify/:id', async(req, res)=>{
 router.put('/resend/verification/', async(req, res)=>{
   const userController = new UserController()
   return await userController.resendVerfication(req, res)
+})
+
+router.post('/login', async(req, res)=>{
+  const userController = new UserController()
+  return await userController.login(req, res)
 })
 
 //a route to update the user category schema
@@ -140,37 +145,6 @@ router.get("/profile", (req, res) => {
     : res.send(400, {
         message: "Authentication required",
       });
-});
-router.post("/login", (req, res) => {
-  var { name, password } = req.body;
-  dbUsers
-    .findOne({ name })
-    .then((doc) => {
-      doc.comparePassword(password, function (err, isMatch) {
-        if (err) throw err;
-        if (isMatch) {
-          doc.generateToken((error, user) => {
-            console.log(error);
-            if (error) return res.send(400, error);
-            res.set("token", user.token);
-            res.send(200, {
-              message: "User loggedIn",
-              id: user.id,
-            });
-          });
-        } else {
-          res.send(400, {
-            message: "Auth failed password incorrect",
-          });
-        }
-      });
-    })
-    .catch((error) => {
-      res.json({
-        message: "logged in failed user not found",
-        error,
-      });
-    });
 });
 
 module.exports = router;
