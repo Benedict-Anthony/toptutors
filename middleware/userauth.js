@@ -1,25 +1,20 @@
-const dbUsers = require('../model/user.model');
+const BaseController = require('../controllers/base');
+const jwt = require('jsonwebtoken');
+const UserModel = require('../model/user.model');
 
-function userAuthModel (){
-   return (req,res,next)=>{
-        console.log(req.headers)
-        if(req.headers && req.headers.token ===''){
-            res.status(400).json({
-                message:"User authentication required",
-            })
+async function userAuthModel (req, res, next){
+    try {
+        const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : ''
+        if(!token){
+            return BaseController.failedResponse(res,'You are not authorized to access the resource')
         }
-        if(!req.headers.token || req.headers.token ==''){
-            res.status(400).json({
-                message:"User authentication required",
-            })
-        }
-        else{
-           const token = req.headers.token
-            dbUsers.findByToken(token,(err,user)=>{
-                if(err) throw err
-                if(user) next();
-            });
-        }
+        const decoded = jwt.verify(token, process.env.SECRET_KEY)
+        const user = await UserModel.findById(decoded.id, '-password')
+        req.user = user
+        next()
+    } catch (error) {
+        next(error)
+        return BaseController.failedResponse(res,'Something went wrong. Please try again later')
     }
     next()
 }

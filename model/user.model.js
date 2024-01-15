@@ -48,11 +48,6 @@ var userSchema = new Schema(
       capitalize: true,
       enum: ["Male", "Female"],
     },
-    country: {
-      type: String,
-      required: false,
-      max: 200,
-    },
     state_of_residence: {
       type: String,
       required: false,
@@ -141,7 +136,8 @@ userSchema.methods.generateToken = async function () {
   var secretkey = process.env.SECRET_KEY;
   const generatedToken = jwt.sign(
     { id: user._id, email: user.email },
-    secretkey
+    secretkey,
+    {expiresIn: '3h'}
   );
   // user.token = generatedToken;
   // await user.save()
