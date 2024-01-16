@@ -474,7 +474,13 @@ class UserController extends BaseController {
       );
     }
   }
-
+  async getUser(req, res){
+    try {
+      return UserController.successResponse(res,req.user)
+    } catch (error) {
+      return UserController.failedServerResponse(res, 'Something went wrong. Please try again later')
+    }
+  }
   
 }
 
