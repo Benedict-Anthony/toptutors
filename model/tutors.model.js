@@ -136,48 +136,45 @@ const tutorsSchema = new Schema(
   { timestamps: true }
 );
 
-// tutorsSchema.pre("save", function (next, doc) {
+// tutorsSchema.pre("save", async function (next) {
 //   var user = this;
-//   // || user.isModified("password")
-//   if (user.isNew) {
-//     //if the user is new or modified hash algorithm runs if it is
-//     bcrypt.genSalt(saltIteration, function (error, salt) {
-//       if (error) {
-//         return console.log(error);
-//       }
-//       bcrypt.hash(user.password, salt, function (err, hashedPassword) {
-//         if (err) return next(err);
-//         user.password = hashedPassword;
-//         next();
-//       });
-//     });
-//   } else {
-//     next();
-//   }
+
+// try {
+//     if (user.isNew || user.isModified("password")) {
+//       //if the user is new or modified hash algorithm runs if it is
+//       const salt = await bcrypt.genSalt(saltIteration)
+//       const hashedPassword = await bcrypt.hash(user.password, salt)
+//       this.password = hashedPassword
+//       next()
+//     } else {
+//       next();
+//     }
+// } catch (error) {
+//   next(error)
+// }
 // });
-// tutorsSchema.methods.comparePassword = async function (candidatePassword) {
+
+// tutorsSchema.methods.comparePassword = async function(candidatePassword) {
 //   try {
-//     const isMatch = await bcrypt.compare(this.password, candidatePassword)
-//     console.log(isMatch,'the match', this.password, candidatePassword)
-//     return isMatch
+//     return await bcrypt.compare(candidatePassword, this.password)
 //   } catch (error) {
 //     console.log(error)
 //   }
 // };
-
-
 // //methods are applied
-// tutorsSchema.methods.generateToken = async function (cb) {
+// tutorsSchema.methods.generateToken = async function () {
 //   var user = this;
-//   var secretkey = process.env.auth_secretkey;
+//   var secretkey = process.env.SECRET_KEY;
 //   const generatedToken = jwt.sign(
-//     { id: user._id, email: user.email, type: user.role },
-//     secretkey
+//     { id: user._id, email: user.email },
+//     secretkey,
+//     {expiresIn: '3h'}
 //   );
 //   // user.token = generatedToken;
 //   // await user.save()
-//   return generatedToken
+//   return generatedToken;
 // };
+
 // tutorsSchema.statics.findByToken = function (token, cb) {
 //   var user = this;
 //   console.log(user);
@@ -208,6 +205,7 @@ const tutorsSchema = new Schema(
 //     });
 //   });
 // };
+
 tutorsSchema.plugin(aggregatePaginate);
 const TutorModel = UserModel.discriminator("Tutor", tutorsSchema);
 module.exports = TutorModel;

@@ -68,6 +68,11 @@ router.get('/dashboard/stat', [userAuth], async(req, res)=>{
   return await userController.dashboardStat(req, res)
 })
 
+router.get('/get-user', [userAuth], async(req, res)=>{
+  const userController = new UserController()
+  return await userController.getUser(req, res)
+})
+
 
 
 

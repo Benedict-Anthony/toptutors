@@ -143,6 +143,7 @@ userSchema.methods.generateToken = async function () {
   // await user.save()
   return generatedToken;
 };
+
 userSchema.statics.findByToken = function (token, cb) {
   var user = this;
   console.log(user);

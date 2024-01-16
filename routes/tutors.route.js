@@ -1,6 +1,6 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const tutorsAuth = require("../middleware/tutors-check-auth");
+const tutorAuth = require("../middleware/tutorAuth");
 const router = express.Router();
 var Tutors = require("../model/tutors.model");
 const { Messagekey } = require("../config");
@@ -87,7 +87,7 @@ router.post("/signup", (req, res) => {
 });
 
 //Profile Update
-router.put("/update", tutorsAuth, (req, res) => {
+router.put("/update", tutorAuth, (req, res) => {
   const token = req.headers.authorization;
   const Token = token.split(" ")[1]; //Separate bearer from the token
   Tutors.findOneAndUpdate(
@@ -109,7 +109,7 @@ router.put("/update", tutorsAuth, (req, res) => {
     });
 });
 
-router.get("/details", tutorsAuth, (req, res) => {
+router.get("/details", tutorAuth, (req, res) => {
   const token = req.headers.authorization;
   const Token = token.split(" ")[1]; //Separate bearer from the token
   Tutors.findOne({ token: Token })

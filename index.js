@@ -7,10 +7,13 @@ var companyRoutes = require("./routes/company.route");
 var parentRoute = require("./routes/parents.route");
 var tutorRoute = require("./routes/tutors.route");
 var userRoutes = require("./routes/users.route");
-var config = require("./config");
+var bookingRoutes = require("./routes/booking.route");
+var seedRoutes = require("./routes/seed.route");
+// var config = require("./config");
 var cors = require("cors");
 var dotenv = require("dotenv");
 const serverless = require("serverless-http");
+const UtilityService = require("./services/UtilityService");
 dotenv.config();
 
 app.use(cors());
@@ -30,11 +33,15 @@ app.use(express.urlencoded({ extended: false }));
 app.get("/", (req, res) => {
   res.send("Welcome to Top Tutors...");
 });
-app.use("/admins", adminRoutes);
-app.use("/company", companyRoutes);
-app.use("/parent", parentRoute);
-app.use("/tutors", tutorRoute);
+app.use("/api/admins", adminRoutes);
+app.use("/api/company", companyRoutes);
+app.use("/api/parent", parentRoute);
+app.use("/api/tutors", tutorRoute);
 app.use("/api/users", userRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/seed", seedRoutes);
+
+
 
 //connect to mongodb
 // mongoose.Promise = global.Promise;
@@ -52,6 +59,7 @@ try {
 } catch (error) {
   console.log(error);
 }
+
 
 
 const port = process.env.PORT || 3000;
