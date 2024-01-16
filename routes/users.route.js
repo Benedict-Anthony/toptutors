@@ -72,6 +72,10 @@ router.get('/get-user', [userAuth], async(req, res)=>{
   const userController = new UserController()
   return await userController.getUser(req, res)
 })
+router.get('/get-users', async(req, res)=>{
+  const userController = new UserController()
+  return await userController.getUsers(req, res)
+})
 
 
 

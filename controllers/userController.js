@@ -481,6 +481,14 @@ class UserController extends BaseController {
       return UserController.failedServerResponse(res, 'Something went wrong. Please try again later')
     }
   }
+  async getUsers(req, res){
+    try {
+      const users = await UserModel.find()
+      return UserController.successResponse(res,users)
+    } catch (error) {
+      return UserController.failedServerResponse(res, 'Something went wrong. Please try again later')
+    }
+  }
   
 }
 
