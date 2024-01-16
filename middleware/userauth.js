@@ -2,7 +2,7 @@ const BaseController = require('../controllers/base');
 const jwt = require('jsonwebtoken');
 const UserModel = require('../model/user.model');
 
-async function userAuthModel (req, res, next){
+async function userAuth (req, res, next){
     try {
         const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : ''
         if(!token){
@@ -13,10 +13,10 @@ async function userAuthModel (req, res, next){
         req.user = user
         next()
     } catch (error) {
-        next(error)
-        return BaseController.failedResponse(res,'Something went wrong. Please try again later')
+        console.log(error,'the error')
+        // next(error)
+        return BaseController.failedResponse(res,'We are unable to login you in. Your session has expired')
     }
-    next()
 }
 
-module.exports = userAuthModel;
+module.exports = userAuth;

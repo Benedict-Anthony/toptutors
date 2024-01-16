@@ -1,5 +1,8 @@
 
 class BaseController {
+    constructor(){
+        this.error_message = 'Something went wrong. Please try again later'
+    }
 
     static failedResponse(res, data){
         const result = {success: false}

@@ -1,11 +1,11 @@
 const express = require("express");
-const checkAuth = require("../middleware/check-auth");
+const parentAuth = require("../middleware/parentAuth");
 const router = express.Router();
 var parents = require("../model/parent.model");
 var dbTutors = require("../model/tutors.model");
 var dbBooking = require("../model/bookings.model");
 
-router.get("/search/tutors", checkAuth, (req, res) => {
+router.get("/search/tutors", parentAuth, (req, res) => {
   console.log(req.query.firstname);
   let aggregate;
   if (req.query.firstname) {
@@ -60,7 +60,7 @@ router.get("/search/tutors", checkAuth, (req, res) => {
     });
 });
 
-router.get("/tutors", checkAuth, (req, res) => {
+router.get("/tutors", parentAuth, (req, res) => {
   console.log("Here");
   const options = {
     // page: req.query.page,
@@ -86,7 +86,7 @@ router.get("/tutors", checkAuth, (req, res) => {
 
 
 //filter
-router.get("/tutors/:keyword", checkAuth, (req, res) => {
+router.get("/tutors/:keyword", parentAuth, (req, res) => {
   console.log(req.params.keyword);
   let options = {
     sort: { first_name: "Ekene" },
@@ -280,7 +280,7 @@ router.put("/reset-password", (req, res) => {
 });
 
 //bookings
-router.post("/booking", checkAuth, (req, res) => {
+router.post("/booking", parentAuth, (req, res) => {
   const { tutor } = req.body;
   dbBooking
     .findOne({ tutor })
@@ -340,7 +340,7 @@ router.get("/booking", (req, res) => {
       });
     });
 });
-router.get("/details", checkAuth, (req, res) => {
+router.get("/details", parentAuth, (req, res) => {
   const token = req.headers.authorization;
   const Token = token.split(" ")[1]; //Separate bearer from the token
   parents
