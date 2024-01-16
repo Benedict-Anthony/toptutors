@@ -7,7 +7,7 @@ async function checkCredentialAttempt(res, user,isMatch){
         return {success: false, message: 'Incorrect credentials. Please try again.'}
       }else{
           const token = await user.generateToken()
-          return {success: true, message: token}
+          return {success: true, message: {token, role: user.role}}
         }
 }
 
