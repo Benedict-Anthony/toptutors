@@ -34,54 +34,48 @@ router.get("/", paginatedModel(Users), (req, res) => {
   res.json(res.paginatedModel);
 });
 
-router.post("/register", async (req, res)=>{
-  const userController = new UserController()
-  return await userController.registerUser(req, res)
-})
+router.post("/register", async (req, res) => {
+  const userController = new UserController();
+  return await userController.registerUser(req, res);
+});
 
-router.put('/verify/:id', async(req, res)=>{
-  const userController = new UserController()
-  return await userController.verifyUser(req, res)
-})
+router.put("/verify/:id", async (req, res) => {
+  const userController = new UserController();
+  return await userController.verifyUser(req, res);
+});
 
-router.put('/resend/verification/', async(req, res)=>{
-  const userController = new UserController()
-  return await userController.resendVerfication(req, res)
-})
+router.put("/resend/verification/", async (req, res) => {
+  const userController = new UserController();
+  return await userController.resendVerfication(req, res);
+});
 
-router.post('/login', async(req, res)=>{
-  const userController = new UserController()
-  return await userController.login(req, res)
-})
+router.post("/login", async (req, res) => {
+  const userController = new UserController();
+  return await userController.login(req, res);
+});
 
-router.post('/forgot-password', async(req, res)=>{
-  const userController = new UserController()
-  return await userController.forgotPassword(req, res)
-})
-router.put('/reset/:id', async(req, res)=>{
-  const userController = new UserController()
-  return await userController.resetPassword(req, res)
-})
+router.post("/forgot-password", async (req, res) => {
+  const userController = new UserController();
+  return await userController.forgotPassword(req, res);
+});
+router.put("/reset/:id", async (req, res) => {
+  const userController = new UserController();
+  return await userController.resetPassword(req, res);
+});
 
-router.get('/dashboard/stat', [userAuth], async(req, res)=>{
-  const userController = new UserController()
-  return await userController.dashboardStat(req, res)
-})
+router.get("/dashboard/stat", [userAuth], async (req, res) => {
+  const userController = new UserController();
+  return await userController.dashboardStat(req, res);
+});
 
-router.get('/get-user', [userAuth], async(req, res)=>{
-  const userController = new UserController()
-  return await userController.getUser(req, res)
-})
-router.get('/get-users', async(req, res)=>{
-  const userController = new UserController()
-  return await userController.getUsers(req, res)
-})
-
-
-
-
-
-
+router.get("/get-user", [userAuth], async (req, res) => {
+  const userController = new UserController();
+  return await userController.getUser(req, res);
+});
+router.get("/get-users", async (req, res) => {
+  const userController = new UserController();
+  return await userController.getUsers(req, res);
+});
 
 //a route to update the user category schema
 router.put("/add_category/:username", (req, res) => {

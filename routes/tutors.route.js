@@ -9,7 +9,6 @@ var domain = "sandbox05003ae3bfa540d28c2ae96b4b665132.mailgun.org";
 const mailgun = require("mailgun-js")({ apiKey: api_key, domain });
 var dbBooking = require("../model/bookings.model");
 
-
 router.get("/", (req, res) => {
   const options = {
     // page: req.query.page,
@@ -19,10 +18,9 @@ router.get("/", (req, res) => {
     pagination: true,
   };
   const aggregate = Tutors.aggregate();
-  Tutors
-    .aggregatePaginate(aggregate, options)
+  Tutors.aggregatePaginate(aggregate, options)
     .then((doc) => {
-      console.log(doc)
+      console.log(doc);
       res.status(200).json({
         message: "Successful",
         data: doc,
@@ -37,7 +35,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/signup", (req, res) => {
-  const {email} = req.body
+  const { email } = req.body;
   Tutors.findOne({ email: req.body.email })
     .then((resp) => {
       console.log(resp);
@@ -138,11 +136,11 @@ router.post("/login", (req, res) => {
       if (doc) {
         doc.comparePassword(password, function (err, isMatch) {
           if (err || !isMatch) {
-            return  res.status(400).json({
+            return res.status(400).json({
               message: "Auth failed password incorrect",
-              err
+              err,
             });
-          };
+          }
           if (isMatch) {
             doc.generateToken((error, user) => {
               if (error) return res.status(400).json(error);
@@ -196,7 +194,7 @@ router.put("/forgot-password", (req, res) => {
         <p>${process.env.clientUrl}/resetpassword/${token}</p>
         `,
       };
-      console.log(token)
+      console.log(token);
       if (token) {
         return doc.updateOne({ reset_link: token }, (err, success) => {
           if (err) {
@@ -230,38 +228,39 @@ router.put("/reset-password", (req, res) => {
   const { password, token } = req.body;
   try {
     const decoded = jwt.verify(token, process.env.password_reset_secret);
-    Tutors.findOne({_id:decoded._id})
-    .then((doc)=>{
-      doc.updatePassword(password,(err,user)=>{
-        if(err){
-          console.log(err)
-          res.json({
-            err
-          })
-        }
-        if(user){
-          user.save()
-          .then(()=>{
-            res.status(200).json({
-              message:"password successfully updated",
-            })
-          })
-          .catch(err=>{
-            console.log(err)
-            res.status(422).json({
-              err
-            })
-          })
-        }
+    Tutors.findOne({ _id: decoded._id })
+      .then((doc) => {
+        doc.updatePassword(password, (err, user) => {
+          if (err) {
+            console.log(err);
+            res.json({
+              err,
+            });
+          }
+          if (user) {
+            user
+              .save()
+              .then(() => {
+                res.status(200).json({
+                  message: "password successfully updated",
+                });
+              })
+              .catch((err) => {
+                console.log(err);
+                res.status(422).json({
+                  err,
+                });
+              });
+          }
+        });
       })
-    })
-    .catch(err=>{
-      console.log(err)
-    })
-  } catch(error) {
+      .catch((err) => {
+        console.log(err);
+      });
+  } catch (error) {
     res.json({
       message: "Password reset failed",
-      error
+      error,
     });
   }
 });
@@ -278,16 +277,16 @@ router.get("/booking", (req, res) => {
       },
     })
     .then((data) => {
-     let processed = data.filter((document) => {
-        console.log(document.tutor.length)
+      let processed = data.filter((document) => {
+        console.log(document.tutor.length);
         if (document.tutor.length !== 0) {
           return document;
         }
       });
-      console.log(processed)
+      console.log(processed);
       res.status(200).json({
         message: "Successfull",
-        result:processed,
+        result: processed,
       });
     })
     .catch((err) => {

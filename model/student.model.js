@@ -1,9 +1,9 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 var Schema = mongoose.Schema;
-const UserModel = require('./user.model');
+const UserModel = require("./user.model");
 
-
-var studentSchema = new Schema({
+var studentSchema = new Schema(
+  {
     // first_name:{
     //     type:String,
     //     required:true,
@@ -52,15 +52,15 @@ var studentSchema = new Schema({
     //     required:true,
     //     max:100
     // },
-    tutor:[{ref:'parent',type:Schema.Types.ObjectId}],
+    tutor: [{ ref: "parent", type: Schema.Types.ObjectId }],
     role: {
-        type: String,
-        default: 'student',
-        enum: ['parent', 'tutor', 'student']
+      type: String,
+      default: "student",
+      enum: ["parent", "tutor", "student", "admin"],
     },
-},
-{ timestamps: true }
-)
+  },
+  { timestamps: true }
+);
 
-const StudentModel = UserModel.discriminator('Student',studentSchema);
-module.exports = StudentModel
+const StudentModel = UserModel.discriminator("Student", studentSchema);
+module.exports = StudentModel;

@@ -61,7 +61,7 @@ const bookingShema = new Schema(
     status: {
       type: String,
       default: "Pending",
-      enum: ["Pending", "Accepted", "Rejected"],
+      enum: ["Pending", "Accepted", "Rejected", "Terminated"],
     },
     schedule_plan: [
       {
@@ -70,6 +70,10 @@ const bookingShema = new Schema(
       },
     ],
     start_session: {
+      type: Boolean,
+      default: false,
+    },
+    rejected: {
       type: Boolean,
       default: false,
     },
@@ -82,7 +86,7 @@ const bookingShema = new Schema(
         status: false,
         attended: Number,
         tutor_rating: Number,
-        parent_rating: Number
+        parent_rating: Number,
       },
     ],
   },
@@ -111,11 +115,16 @@ bookingShema.pre("save", function (next) {
   const noOfMonths = Math.ceil(this.duration_in_week / 4);
   let monthArr = Array(noOfMonths).fill(null);
   const monthResult = monthArr.map((val, idx) => {
-    return { attended: idx + 1, status: false, tutor_rating: 0, parent_rating: 0 };
+    return {
+      attended: idx + 1,
+      status: false,
+      tutor_rating: 0,
+      parent_rating: 0,
+    };
   });
-  booking.session_per_month = monthResult
+  booking.session_per_month = monthResult;
 
-  next()
+  next();
 });
 
 bookingShema.plugin(aggregatePaginate);

@@ -92,8 +92,8 @@ const parentSchema = new Schema(
     booking: [{ type: Schema.ObjectId, ref: "booking" }],
     role: {
       type: String,
-      default: 'parent',
-      enum: ['parent', 'tutor', 'student']
+      default: "parent",
+      enum: ["parent", "tutor", "student", "admin"],
     },
   },
   { timestamps: true }

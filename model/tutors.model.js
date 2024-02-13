@@ -130,10 +130,18 @@ const tutorsSchema = new Schema(
     role: {
       type: String,
       default: "tutor",
-      enum: ["parent", "tutor", "student"],
+      enum: ["parent", "tutor", "student", "admin"],
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+    },
+    toObject: {
+      virtuals: true,
+    },
+  }
 );
 
 // tutorsSchema.pre("save", async function (next) {
@@ -206,6 +214,12 @@ const tutorsSchema = new Schema(
 //   });
 // };
 
+tutorsSchema.virtual("ratings", {
+  ref: "Rating",
+  localField: "_id",
+  foreignField: "tutor",
+  justOne: false,
+});
 tutorsSchema.plugin(aggregatePaginate);
 const TutorModel = UserModel.discriminator("Tutor", tutorsSchema);
 module.exports = TutorModel;

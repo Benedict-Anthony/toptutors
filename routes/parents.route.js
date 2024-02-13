@@ -1,12 +1,12 @@
 const express = require("express");
 const parentAuth = require("../middleware/parentAuth");
+const userAuth = require("../middleware/userauth");
 const router = express.Router();
 var parents = require("../model/parent.model");
 var dbTutors = require("../model/tutors.model");
 var dbBooking = require("../model/bookings.model");
 
 router.get("/search/tutors", parentAuth, (req, res) => {
-  console.log(req.query.firstname);
   let aggregate;
   if (req.query.firstname) {
     aggregate = dbTutors.aggregate([
@@ -41,8 +41,7 @@ router.get("/search/tutors", parentAuth, (req, res) => {
       },
     ]);
   }
-  const options = {
-  };
+  const options = {};
   console.log(aggregate);
   dbTutors
     .aggregatePaginate(aggregate, options)
@@ -61,7 +60,6 @@ router.get("/search/tutors", parentAuth, (req, res) => {
 });
 
 router.get("/tutors", parentAuth, (req, res) => {
-  console.log("Here");
   const options = {
     // page: req.query.page,
     // limit: req.query.limit,
@@ -83,7 +81,26 @@ router.get("/tutors", parentAuth, (req, res) => {
       });
     });
 });
+router.get("/tutors/:id", parentAuth, async (req, res) => {
+  const tutorId = req.params.id;
+  try {
+    const tutor = await dbTutors
+      .findOne({ _id: tutorId })
+      .select(
+        "-password -verification_code -verification_expiration -failed_attempts"
+      );
+    if (!tutor) {
+      res.status(404).json({ message: "Detail Not found" });
+      return;
+    }
 
+    res.status(200).json({ sucess: true, data: tutor });
+  } catch (error) {
+    console.log(error);
+
+    res.status(400).json({ message: "Bad Request" });
+  }
+});
 
 //filter
 router.get("/tutors/:keyword", parentAuth, (req, res) => {
@@ -106,7 +123,6 @@ router.get("/tutors/:keyword", parentAuth, (req, res) => {
       });
     });
 });
-
 
 router.post("/signup", (req, res) => {
   const { email } = req.body;
@@ -280,13 +296,13 @@ router.put("/reset-password", (req, res) => {
 });
 
 //bookings
-router.post("/booking", parentAuth, (req, res) => {
+router.post("/booking", userAuth, parentAuth, (req, res) => {
   const { tutor } = req.body;
+  const booked_by = req.user.id;
   dbBooking
     .findOne({ tutor })
     .then((data) => {
-      console.log(data);
-      const newBooking = new dbBooking({ ...req.body });
+      const newBooking = new dbBooking({ ...req.body, booked_by });
       newBooking
         .save()
         .then((data) => {
